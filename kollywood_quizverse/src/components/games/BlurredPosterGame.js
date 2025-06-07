@@ -4,6 +4,12 @@ import { QuizContext } from "../../context/QuizContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./BlurredPosterGame.css";
 
+// PUBLIC_INTERFACE
+/**
+ * BlurredPosterGame:
+ * - Records and displays user's score for the session (live and at the end),
+ * - Allows user to return to previous page/dashboard using 'Back' button (useNavigate).
+ */
 const BLUR_STEPS = [12, 6, 2, 0];
 const MAX_ATTEMPTS = 3;
 const NUM_ROUNDS = 10;
@@ -29,51 +35,47 @@ function normalizeTitle(title) {
 
 // Generate up to two clues for a poster. First is year, second is actor/cast.
 async function getCluesForMovie(movie) {
-  // 1. Clue 1: Release year
   const clues = [];
   if (movie.release_date) {
     const year = new Date(movie.release_date).getFullYear();
     clues.push("Release year: " + year);
   }
-  // 2. Clue 2: Cast/actor, using TMDb or fallback to none.
   const actorClue = await getCastClue(movie.id);
   if (actorClue) clues.push(actorClue);
-  // If not, fallback to a simple generic clue
   if (clues.length < 2 && movie.title) {
     clues.push("Title contains: " + movie.title.split(" ")[0]);
   }
   return clues;
 }
 
-// PUBLIC_INTERFACE
 export default function BlurredPosterGame({ standalone }) {
   const { dispatch } = useContext(QuizContext);
+
+  // Game state
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [round, setRound] = useState(0);
   const [userGuess, setUserGuess] = useState("");
   const [attempt, setAttempt] = useState(0);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(0); // session-persisted unless reload
   const [showResult, setShowResult] = useState(null); // 'win'/'lose'/null
   const [answers, setAnswers] = useState([]);
-  // State for clues
-  const [clueCount, setClueCount] = useState(0);  // How many clues revealed for current poster
-  const [clues, setClues] = useState([]);         // Array of clues for current poster
+
+  // Clue state
+  const [clueCount, setClueCount] = useState(0);
+  const [clues, setClues] = useState([]);
   const [cluesLoading, setCluesLoading] = useState(false);
 
   const navigate = useNavigate();
-  const location = useLocation();
 
   // Fetch movies for all rounds at once
   useEffect(() => {
     async function loadMovies() {
       setLoading(true);
-      // Overfetch to reduce risk of duplicates
       const moviesArr = await fetchPopularTamilMovies(NUM_ROUNDS * 3);
-      // Pick NUM_ROUNDS unique movies randomly
+      // Pick NUM_ROUNDS unique movies randomly (must have poster)
       let chosen = [];
       let pickedIdxs = new Set();
-      // Defensive: filter out titles without poster_path
       let filteredMovies = moviesArr.filter(m => !!m.poster_path);
       if (filteredMovies.length < NUM_ROUNDS) filteredMovies = moviesArr;
       while (chosen.length < NUM_ROUNDS && filteredMovies.length > 0) {
@@ -84,7 +86,8 @@ export default function BlurredPosterGame({ standalone }) {
         }
       }
       setMovies(chosen);
-      setAnswers([]); // reset per session
+      // Reset all session states
+      setAnswers([]);
       setRound(0); setScore(0); setAttempt(0); setShowResult(null); setUserGuess("");
       setClueCount(0); setClues([]); setCluesLoading(false);
       setLoading(false);
@@ -93,48 +96,42 @@ export default function BlurredPosterGame({ standalone }) {
     // eslint-disable-next-line
   }, []);
 
-  // If a new round/movie, reset clues
+  // Reset clue state for new round/movie
   useEffect(() => {
     setClueCount(0);
     setClues([]);
     setCluesLoading(false);
   }, [round]);
 
-  // Fetch next poster (essentially update state for next round)
-  function nextPoster() {
-    setAttempt(0);
-    setShowResult(null);
-    setUserGuess("");
-    setClueCount(0);
-    setClues([]);
-    setCluesLoading(false);
+  // "Back" button handler
+  function handleGoBack() {
+    if (standalone) {
+      navigate(-1); // go to previous page; on direct access goes to root
+    } else {
+      dispatch({ type: "CLOSE_MODAL" });
+    }
   }
-
-  if (loading) return <div style={{ minHeight: 250 }}>Loading movie posters...</div>;
-  if (!movies[round]) return <div style={{ minHeight: 250 }}>No movie found for this round.</div>;
-
-  const movie = movies[round];
 
   // Handler for clue button
   const handleGetClue = async () => {
     if (clueCount >= 2) return;
     if (clues.length >= clueCount + 1) {
-      // Already available, just increment
       setClueCount(clueCount + 1);
       return;
     }
     setCluesLoading(true);
-    // Fetch clues only once per movie per game
     const fullClues = clues.length
       ? clues
-      : await getCluesForMovie(movie);
+      : await getCluesForMovie(movies[round]);
     setClues(fullClues);
     setClueCount(clueCount + 1);
     setCluesLoading(false);
   };
 
+  // Guess handler
   function handleGuess(e) {
     e.preventDefault();
+    const movie = movies[round];
     if (normalizeTitle(userGuess) === normalizeTitle(movie.title)) {
       setShowResult("win");
       setScore(prevScore => prevScore + (5 - attempt));
@@ -151,7 +148,6 @@ export default function BlurredPosterGame({ standalone }) {
   }
 
   function handleNext() {
-    // Move to next round or finish and show score
     if (round + 1 < NUM_ROUNDS) {
       setRound(round + 1);
       setAttempt(0);
@@ -164,7 +160,7 @@ export default function BlurredPosterGame({ standalone }) {
   }
 
   function handleFinish() {
-    // Save score to global history only once, at the end
+    // Persist score to context history
     dispatch({
       type: "ADD_SCORE_HISTORY",
       payload: {
@@ -174,17 +170,42 @@ export default function BlurredPosterGame({ standalone }) {
       },
     });
     if (standalone) {
-      // go to dashboard on finish in standalone/page mode
       navigate("/");
     } else {
       dispatch({ type: "CLOSE_MODAL" });
     }
   }
 
-  // Render results if finished
+  if (loading) return <div style={{ minHeight: 250 }}>Loading movie posters...</div>;
+  if (!movies[round]) return <div style={{ minHeight: 250 }}>No movie found for this round.</div>;
+
+  const movie = movies[round];
+  // Top UI row styles
+  const headerRowStyle = {
+    display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10
+  };
+  const scoreBoxStyle = {
+    background: "#ffd600", color: "#d32f2f", fontWeight: 700,
+    fontSize: "1.08rem", borderRadius: 7, padding: "4px 17px", minWidth: 65, textAlign: "center",
+    boxShadow: "0 1px 8px #efb01d21", display: "inline-block"
+  };
+
+  // Last round, just finished
   if (round === NUM_ROUNDS - 1 && showResult !== null) {
     return (
       <div className="kv-game-modal">
+        <div style={headerRowStyle}>
+          <button
+            className="kv-btn kv-btn-accent"
+            style={{ minWidth: 58 }}
+            onClick={handleGoBack}
+          >
+            &larr; Back
+          </button>
+          <div style={scoreBoxStyle}>
+            Score: {score} / {NUM_ROUNDS * 5}
+          </div>
+        </div>
         <h2>Guess the Movie: Blurred Poster</h2>
         <div className="kv-blur-poster-row">
           <img
@@ -207,7 +228,6 @@ export default function BlurredPosterGame({ standalone }) {
             ❌ Sorry, the answer was <b>{movie.title}</b>.
           </div>
         )}
-        {/* Show clues summary if clues used */}
         {clueCount > 0 && (
           <div className="kv-hint-row">
             <b>Clues used ({clueCount}/2):</b>
@@ -225,10 +245,22 @@ export default function BlurredPosterGame({ standalone }) {
     );
   }
 
-  // Show results/score breakdown after all rounds
+  // Quiz complete: show full score and round breakdown
   if (round === NUM_ROUNDS && !loading) {
     return (
       <div className="kv-game-modal">
+        <div style={headerRowStyle}>
+          <button
+            className="kv-btn kv-btn-accent"
+            style={{ minWidth: 58 }}
+            onClick={handleGoBack}
+          >
+            &larr; Back
+          </button>
+          <div style={scoreBoxStyle}>
+            Score: {score} / {NUM_ROUNDS * 5}
+          </div>
+        </div>
         <h2>Quiz Complete!</h2>
         <div style={{ margin: "20px 0" }}>
           <div style={{ fontWeight: 600, fontSize: "1.3rem", color: "#439638" }}>
@@ -263,8 +295,21 @@ export default function BlurredPosterGame({ standalone }) {
     );
   }
 
+  // Active round view (main question UI)
   return (
     <div className="kv-game-modal">
+      <div style={headerRowStyle}>
+        <button
+          className="kv-btn kv-btn-accent"
+          style={{ minWidth: 58 }}
+          onClick={handleGoBack}
+        >
+          &larr; Back
+        </button>
+        <div style={scoreBoxStyle}>
+          Score: {score} / {NUM_ROUNDS * 5}
+        </div>
+      </div>
       <h2>
         Guess the Movie: Blurred Poster<br />
         <span style={{ fontSize: "1rem", color: "#a88203" }}>
@@ -283,7 +328,6 @@ export default function BlurredPosterGame({ standalone }) {
           alt="Movie Blurred Poster"
         />
       </div>
-      {/* Clue Button logic */}
       <div style={{ marginBottom: 8 }}>
         <button
           className="kv-btn kv-btn-accent"
@@ -303,7 +347,6 @@ export default function BlurredPosterGame({ standalone }) {
           {clueCount} / 2 clues used
         </span>
       </div>
-      {/* Render revealed clues */}
       {clueCount > 0 && (
         <div className="kv-hint-row">
           <b>Clue{clueCount > 1 ? "s" : ""}:</b>
@@ -342,7 +385,6 @@ export default function BlurredPosterGame({ standalone }) {
               ❌ Sorry, the answer was <b>{movie.title}</b>.
             </div>
           )}
-          {/* Show clues summary at round end, if clues were revealed */}
           {clueCount > 0 && (
             <div className="kv-hint-row">
               <b>Clues used ({clueCount}/2):</b>
@@ -357,7 +399,7 @@ export default function BlurredPosterGame({ standalone }) {
             className="kv-btn"
             onClick={() => {
               if (round + 1 < NUM_ROUNDS) handleNext();
-              else setRound(NUM_ROUNDS); // trigger final result view
+              else setRound(NUM_ROUNDS); // go to final view
             }}
             style={{ marginTop: 11 }}
           >
