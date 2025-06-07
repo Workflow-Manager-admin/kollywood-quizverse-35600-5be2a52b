@@ -2,9 +2,9 @@
 > react-kavia@0.1.0 start
 > react-scripts start
 
-(node:91725) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(node:105097) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:91725) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(node:105097) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
 Starting the development server...
 
 Compiled successfully!
@@ -19,208 +19,62 @@ To create a production build, use npm run build.
 
 webpack compiled successfully
 Compiling...
-Failed to compile.
+Compiled with warnings.
 
 [eslint] 
 src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  Line 4:23:  'useLocation' is defined but never used  no-unused-vars
 
-Search for the keywords to learn more about each error.
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
 WARNING in [eslint] 
 src/components/games/BlurredPosterGame.js
   Line 4:23:  'useLocation' is defined but never used  no-unused-vars
 
-ERROR in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-webpack compiled with 1 error and 1 warning
+webpack compiled with 1 warning
 Compiling...
-Failed to compile.
+Compiled with warnings.
 
 [eslint] 
 src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  Line 4:23:  'useLocation' is defined but never used  no-unused-vars
 
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
 
-Search for the keywords to learn more about each error.
 WARNING in [eslint] 
 src/components/games/BlurredPosterGame.js
   Line 4:23:  'useLocation' is defined but never used  no-unused-vars
 
-ERROR in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-webpack compiled with 1 error and 1 warning
+webpack compiled with 1 warning
 Compiling...
-Failed to compile.
+Compiled with warnings.
 
 [eslint] 
 src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  Line 4:23:  'useLocation' is defined but never used  no-unused-vars
 
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
 
-Search for the keywords to learn more about each error.
 WARNING in [eslint] 
 src/components/games/BlurredPosterGame.js
   Line 4:23:  'useLocation' is defined but never used  no-unused-vars
 
-ERROR in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-webpack compiled with 1 error and 1 warning
+webpack compiled with 1 warning
 Compiling...
-Failed to compile.
+Compiled with warnings.
 
 [eslint] 
 src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+  Line 4:23:  'useLocation' is defined but never used  no-unused-vars
 
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
 
-Search for the keywords to learn more about each error.
 WARNING in [eslint] 
 src/components/games/BlurredPosterGame.js
   Line 4:23:  'useLocation' is defined but never used  no-unused-vars
 
-ERROR in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-webpack compiled with 1 error and 1 warning
-Compiling...
-Failed to compile.
-
-[eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-WARNING in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 4:23:  'useLocation' is defined but never used  no-unused-vars
-
-src/components/games/SixDegreesGame.js
-  Line 11:10:  'sessionEnded' is assigned a value but never used  no-unused-vars
-
-ERROR in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-webpack compiled with 1 error and 1 warning
-Compiling...
-Failed to compile.
-
-[eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-WARNING in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 4:23:  'useLocation' is defined but never used  no-unused-vars
-
-src/components/games/SixDegreesGame.js
-  Line 11:10:  'sessionEnded' is assigned a value but never used  no-unused-vars
-
-ERROR in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-webpack compiled with 1 error and 1 warning
-Compiling...
-Failed to compile.
-
-[eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-WARNING in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 4:23:  'useLocation' is defined but never used  no-unused-vars
-
-src/components/games/SixDegreesGame.js
-  Line 11:10:  'sessionEnded' is assigned a value but never used  no-unused-vars
-
-ERROR in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-webpack compiled with 1 error and 1 warning
-Compiling...
-Failed to compile.
-
-[eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-WARNING in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 4:23:  'useLocation' is defined but never used  no-unused-vars
-
-src/components/games/SixDegreesGame.js
-  Line 11:10:  'sessionEnded' is assigned a value but never used  no-unused-vars
-
-ERROR in [eslint] 
-src/components/games/BlurredPosterGame.js
-  Line 185:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-src/components/games/CastGuessGame.js
-  Line 167:3:  React Hook "React.useEffect" is called conditionally. React Hooks must be called in the exact same order in every component render. Did you accidentally call a React Hook after an early return?  react-hooks/rules-of-hooks
-
-Search for the keywords to learn more about each error.
-
-webpack compiled with 1 error and 1 warning
+webpack compiled with 1 warning

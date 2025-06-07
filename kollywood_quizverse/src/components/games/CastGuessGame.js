@@ -140,9 +140,6 @@ export default function CastGuessGame({ standalone }) {
     }
   }
 
-  // View loading?
-  if (loading || !questions.length) return <div style={{ minHeight: 220 }}>Loading...</div>;
-
   // Helper style snippets for consistency
   const headerRowStyle = {
     display: "flex",
@@ -163,8 +160,8 @@ export default function CastGuessGame({ standalone }) {
     display: "inline-block"
   };
 
-  // Quiz complete summary
-  React.useEffect(() => {
+  // Quiz complete summary effect, must always run
+  useEffect(() => {
     if (standalone && state.done) {
       const timeout = setTimeout(() => {
         handleCloseOrHome();
@@ -174,9 +171,14 @@ export default function CastGuessGame({ standalone }) {
     // eslint-disable-next-line
   }, [standalone, state.done]);
 
-  if (state.done) {
-    return (
-      <div className="kv-game-modal">
+  // --- Main conditional UI content assigned to content variable for return ---
+  let content;
+
+  if (loading || !questions.length) {
+    content = <div style={{ minHeight: 220 }}>Loading...</div>;
+  } else if (state.done) {
+    content = (
+      <div>
         <div style={headerRowStyle}>
           <button
             className="kv-btn kv-btn-accent"
@@ -218,68 +220,75 @@ export default function CastGuessGame({ standalone }) {
         )}
       </div>
     );
+  } else {
+    // Active round view
+    const question = questions[currIdx];
+    content = (
+      <>
+        <div style={headerRowStyle}>
+          <button
+            className="kv-btn kv-btn-accent"
+            style={{ minWidth: 58 }}
+            onClick={handleGoBack}
+          >
+            &larr; Back
+          </button>
+          <div style={scoreBoxStyle}>
+            Score: {state.score} / {NUM_ROUNDS * SCORE_PER_CORRECT}
+          </div>
+        </div>
+        <h2>
+          Guess the Movie by Cast<br />
+          <span style={{ fontSize: "1rem", color: "#a88203" }}>
+            Round {currIdx + 1} / {NUM_ROUNDS}
+          </span>
+        </h2>
+        <div className="kv-cast-row">
+          {question.cast.length > 0 ? (
+            <>
+              <span>Cast:</span>
+              {question.cast.map(m => (
+                <span className="kv-cast-bubble" key={m.id || m.name}>{m.name}</span>
+              ))}
+            </>
+          ) : (
+            <span>No cast data, try guessing!</span>
+          )}
+        </div>
+        <div className="kv-cast-choices">
+          {question.options.map((mov, i) => (
+            <button
+              key={mov.id}
+              onClick={() => answerIdx === null && handleChoice(i)}
+              className={
+                answerIdx !== null
+                  ? mov.id === question.answerId
+                    ? "kv-cast-correct"
+                    : i === answerIdx
+                    ? "kv-cast-wrong"
+                    : "kv-cast-default"
+                  : "kv-cast-btn"
+              }
+              disabled={answerIdx !== null}
+            >
+              <img src={getPosterUrl(mov.poster_path, "w185")} style={{ width: 90, borderRadius: 9 }} alt="" />
+              <div>{mov.title}</div>
+            </button>
+          ))}
+        </div>
+        {answerIdx !== null && (
+          <div className="kv-cast-result" style={{ marginTop: 18 }}>
+            {question.options[answerIdx].id === question.answerId ? "🎉 Correct!" : "❌ Wrong"}
+          </div>
+        )}
+      </>
+    );
   }
 
-  // Active round view
-  const question = questions[currIdx];
+  // Always run all hooks above; only subset render now
   return (
     <div className="kv-game-modal">
-      <div style={headerRowStyle}>
-        <button
-          className="kv-btn kv-btn-accent"
-          style={{ minWidth: 58 }}
-          onClick={handleGoBack}
-        >
-          &larr; Back
-        </button>
-        <div style={scoreBoxStyle}>
-          Score: {state.score} / {NUM_ROUNDS * SCORE_PER_CORRECT}
-        </div>
-      </div>
-      <h2>
-        Guess the Movie by Cast<br />
-        <span style={{ fontSize: "1rem", color: "#a88203" }}>
-          Round {currIdx + 1} / {NUM_ROUNDS}
-        </span>
-      </h2>
-      <div className="kv-cast-row">
-        {question.cast.length > 0 ? (
-          <>
-            <span>Cast:</span>
-            {question.cast.map(m => (
-              <span className="kv-cast-bubble" key={m.id || m.name}>{m.name}</span>
-            ))}
-          </>
-        ) : (
-          <span>No cast data, try guessing!</span>
-        )}
-      </div>
-      <div className="kv-cast-choices">
-        {question.options.map((mov, i) => (
-          <button
-            key={mov.id}
-            onClick={() => answerIdx === null && handleChoice(i)}
-            className={
-              answerIdx !== null
-                ? mov.id === question.answerId
-                  ? "kv-cast-correct"
-                  : i === answerIdx
-                  ? "kv-cast-wrong"
-                  : "kv-cast-default"
-                : "kv-cast-btn"
-            }
-            disabled={answerIdx !== null}
-          >
-            <img src={getPosterUrl(mov.poster_path, "w185")} style={{ width: 90, borderRadius: 9 }} alt="" />
-            <div>{mov.title}</div>
-          </button>
-        ))}
-      </div>
-      {answerIdx !== null && (
-        <div className="kv-cast-result" style={{ marginTop: 18 }}>
-          {question.options[answerIdx].id === question.answerId ? "🎉 Correct!" : "❌ Wrong"}
-        </div>
-      )}
+      {content}
     </div>
   );
 }

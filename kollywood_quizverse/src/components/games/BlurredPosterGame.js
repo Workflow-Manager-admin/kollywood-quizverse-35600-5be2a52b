@@ -48,6 +48,11 @@ async function getCluesForMovie(movie) {
   return clues;
 }
 
+/**
+ * FIX: React hooks must not be conditional on render — all hooks must always run in the same order on every render.
+ * This version lifts the loading/no-movies conditionals out of the main render function and always runs all hooks first.
+ */
+
 export default function BlurredPosterGame({ standalone }) {
   const { dispatch } = useContext(QuizContext);
 
@@ -58,7 +63,7 @@ export default function BlurredPosterGame({ standalone }) {
   const [userGuess, setUserGuess] = useState("");
   const [attempt, setAttempt] = useState(0);
   const [score, setScore] = useState(0); // session-persisted unless reload
-  const [showResult, setShowResult] = useState(null); // 'win'/'lose'/null
+  const [showResult, setShowResult] = useState(null); // 'win'/'lose'/null/reveal
   const [answers, setAnswers] = useState([]);
 
   // Clue state
@@ -68,39 +73,45 @@ export default function BlurredPosterGame({ standalone }) {
 
   const navigate = useNavigate();
 
-  // Fetch a tough (unpopular, less repeated) set of Kollywood movies for game rounds
-  useEffect(() => {
-    async function loadMovies() {
-      setLoading(true);
-      // Fetch a large enough pool for sampling
-      const moviesArr = await fetchToughTamilMovies({ count: NUM_ROUNDS });
-      // All are already unique and 'tough' from the helper.
-      setMovies(moviesArr);
-      // Reset all session states
-      setAnswers([]);
-      setRound(0); setScore(0); setAttempt(0); setShowResult(null); setUserGuess("");
-      setClueCount(0); setClues([]); setCluesLoading(false);
-      setLoading(false);
-    }
-    loadMovies();
-    // eslint-disable-next-line
-  }, []);
-
-  // Reset clue state for new round/movie
-  useEffect(() => {
-    setClueCount(0);
-    setClues([]);
-    setCluesLoading(false);
-  }, [round]);
-
   // "Back" button handler
   function handleGoBack() {
     if (standalone) {
-      navigate(-1); // go to previous page; on direct access goes to root
+      navigate(-1);
     } else {
       dispatch({ type: "CLOSE_MODAL" });
     }
   }
+
+  function handleNext() {
+    if (round + 1 < NUM_ROUNDS) {
+      setRound(round + 1);
+      setAttempt(0);
+      setShowResult(null);
+      setUserGuess("");
+      setClueCount(0);
+      setClues([]);
+      setCluesLoading(false);
+    }
+  }
+
+  // Memoized so it is stable in deps
+  const handleFinish = React.useCallback(() => {
+    // Persist score to context history
+    dispatch({
+      type: "ADD_SCORE_HISTORY",
+      payload: {
+        game: "Blurred Poster",
+        score: score,
+        time: new Date().toLocaleString(),
+      },
+    });
+    if (standalone) {
+      navigate("/");
+    } else {
+      dispatch({ type: "CLOSE_MODAL" });
+    }
+  // eslint-disable-next-line
+  }, [dispatch, navigate, score, standalone]);
 
   // Handler for clue button
   const handleGetClue = async () => {
@@ -121,6 +132,7 @@ export default function BlurredPosterGame({ standalone }) {
   // Guess handler
   function handleGuess(e) {
     e.preventDefault();
+    if (!movies[round]) return;
     const movie = movies[round];
     if (normalizeTitle(userGuess) === normalizeTitle(movie.title)) {
       setShowResult("win");
@@ -137,40 +149,45 @@ export default function BlurredPosterGame({ standalone }) {
     setUserGuess("");
   }
 
-  function handleNext() {
-    if (round + 1 < NUM_ROUNDS) {
-      setRound(round + 1);
-      setAttempt(0);
-      setShowResult(null);
-      setUserGuess("");
-      setClueCount(0);
-      setClues([]);
-      setCluesLoading(false);
+  // Fetch a tough (unpopular, less repeated) set of Kollywood movies for game rounds
+  useEffect(() => {
+    async function loadMovies() {
+      setLoading(true);
+      // Fetch a large enough pool for sampling
+      const moviesArr = await fetchToughTamilMovies({ count: NUM_ROUNDS });
+      setMovies(moviesArr);
+      setAnswers([]);
+      setRound(0); setScore(0); setAttempt(0); setShowResult(null); setUserGuess("");
+      setClueCount(0); setClues([]); setCluesLoading(false);
+      setLoading(false);
     }
-  }
+    loadMovies();
+    // eslint-disable-next-line
+  }, []);
 
-  function handleFinish() {
-    // Persist score to context history
-    dispatch({
-      type: "ADD_SCORE_HISTORY",
-      payload: {
-        game: "Blurred Poster",
-        score: score,
-        time: new Date().toLocaleString(),
-      },
-    });
-    if (standalone) {
-      navigate("/");
-    } else {
-      dispatch({ type: "CLOSE_MODAL" });
+  // Reset clue state for new round/movie
+  useEffect(() => {
+    setClueCount(0);
+    setClues([]);
+    setCluesLoading(false);
+  }, [round]);
+
+  // Last round, just finished: show result for 2.6s & auto home
+  useEffect(() => {
+    if (standalone && round === NUM_ROUNDS - 1 && showResult !== null) {
+      const timeout = setTimeout(() => {
+        handleFinish();
+      }, 2600);
+      return () => clearTimeout(timeout);
     }
-  }
+  }, [standalone, round, showResult, handleFinish]);
 
-  if (loading) return <div style={{ minHeight: 250 }}>Loading movie posters...</div>;
-  if (!movies[round]) return <div style={{ minHeight: 250 }}>No movie found for this round.</div>;
+  // --- No early returns for hooks ---
+  // Instead, assign variables to conditionally render below
+
+  let mainContent = null;
 
   const movie = movies[round];
-  // Top UI row styles
   const headerRowStyle = {
     display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10
   };
@@ -180,22 +197,16 @@ export default function BlurredPosterGame({ standalone }) {
     boxShadow: "0 1px 8px #efb01d21", display: "inline-block"
   };
 
-  // Last round, just finished
-  // After user sees final result, show score for a few seconds & auto-redirect home
-  React.useEffect(() => {
-    if (standalone && round === NUM_ROUNDS - 1 && showResult !== null) {
-      // After result shown, wait, then navigate home
-      const timeout = setTimeout(() => {
-        handleFinish();
-      }, 2600); // 2.6 seconds for UX
-      return () => clearTimeout(timeout);
-    }
-  // eslint-disable-next-line
-  }, [standalone, round, showResult]);
-
-  if (round === NUM_ROUNDS - 1 && showResult !== null) {
-    return (
-      <div className="kv-game-modal">
+  if (loading) {
+    mainContent = <div style={{ minHeight: 250 }}>Loading movie posters...</div>;
+  }
+  else if (!movie) {
+    mainContent = <div style={{ minHeight: 250 }}>No movie found for this round.</div>;
+  }
+  else if (round === NUM_ROUNDS - 1 && showResult !== null) {
+    // Just finished the last round, show result for 2.5s, then redirect
+    mainContent = (
+      <div>
         <div style={headerRowStyle}>
           <button
             className="kv-btn kv-btn-accent"
@@ -254,11 +265,10 @@ export default function BlurredPosterGame({ standalone }) {
       </div>
     );
   }
-
-  // Quiz complete: show full score and round breakdown
-  if (round === NUM_ROUNDS && !loading) {
-    return (
-      <div className="kv-game-modal">
+  else if (round === NUM_ROUNDS && !loading) {
+    // Quiz complete: show full score and breakdown
+    mainContent = (
+      <div>
         <div style={headerRowStyle}>
           <button
             className="kv-btn kv-btn-accent"
@@ -304,137 +314,143 @@ export default function BlurredPosterGame({ standalone }) {
       </div>
     );
   }
-
-  // Active round view (main question UI)
-  return (
-    <div className="kv-game-modal">
-      <div style={headerRowStyle}>
-        <button
-          className="kv-btn kv-btn-accent"
-          style={{ minWidth: 58 }}
-          onClick={handleGoBack}
-        >
-          &larr; Back
-        </button>
-        <div style={scoreBoxStyle}>
-          Score: {score} / {NUM_ROUNDS * 5}
-        </div>
-      </div>
-      <h2>
-        Guess the Movie: Blurred Poster<br />
-        <span style={{ fontSize: "1rem", color: "#a88203" }}>
-          Round {round + 1} / {NUM_ROUNDS}
-        </span>
-      </h2>
-      <div className="kv-blur-poster-row">
-        <img
-          src={getPosterUrl(movie.poster_path)}
-          style={{
-            filter: `blur(${BLUR_STEPS[attempt]}px)`,
-            width: 220,
-            borderRadius: 16,
-            background: "#232",
-          }}
-          alt="Movie Blurred Poster"
-        />
-      </div>
-      <div style={{ marginBottom: 8 }}>
-        <button
-          className="kv-btn kv-btn-accent"
-          style={{
-            background: clueCount >= 2 ? "#FFD60088" : undefined,
-            color: clueCount >= 2 ? "#444" : undefined,
-            cursor: cluesLoading || clueCount >= 2 ? "not-allowed" : "pointer",
-            marginRight: 8,
-            minWidth: 90,
-          }}
-          onClick={handleGetClue}
-          disabled={cluesLoading || clueCount >= 2}
-        >
-          {cluesLoading ? "Loading..." : clueCount < 2 ? "Get Clue" : "No More Clues"}
-        </button>
-        <span style={{ color: "#a88203", fontSize: "1.01rem" }}>
-          {clueCount} / 2 clues used
-        </span>
-      </div>
-      {clueCount > 0 && (
-        <div className="kv-hint-row">
-          <b>Clue{clueCount > 1 ? "s" : ""}:</b>
-          <ul style={{ marginTop: 3, marginBottom: 0 }}>
-            {clues.slice(0, clueCount).map((clue, i) => (
-              <li key={i}>{clue}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {showResult === null ? (
-        <>
-          <form className="kv-guess-form" onSubmit={handleGuess}>
-            <input
-              className="kv-guess-input"
-              type="text"
-              placeholder="Type the movie name..."
-              value={userGuess}
-              onChange={e => setUserGuess(e.target.value)}
-              maxLength={40}
-              required
-              autoFocus
-            />
-            <button className="kv-btn">Guess</button>
-          </form>
-          <div className="kv-hint-row">{MAX_ATTEMPTS - attempt} tries left.</div>
+  else if (!!movie) {
+    // Main round view
+    mainContent = (
+      <>
+        <div style={headerRowStyle}>
           <button
             className="kv-btn kv-btn-accent"
-            style={{ marginTop: 13, marginLeft: 6, background: "#FFD600", color: "#2d2d2d" }}
-            onClick={() => {
-              // Mark this round as "lose" and auto-advance after short delay, or show answer if last
-              setShowResult("reveal");
-              setAnswers(a => [...a, { correct: false, title: movie.title }]);
-              setTimeout(() => {
-                if (round + 1 < NUM_ROUNDS) handleNext();
-                else setRound(NUM_ROUNDS); // move to results
-              }, 1500); // Show for 1.5s before moving forward
-            }}
+            style={{ minWidth: 58 }}
+            onClick={handleGoBack}
           >
-            Reveal Answer
+            &larr; Back
           </button>
-        </>
-      ) : (
-        <>
-          <div className={showResult === "win" ? "kv-result-win" : "kv-result-lose"}>
-            {showResult === "win"
-              ? <>🎉 Correct! It was <b>{movie.title}</b>.</>
-              : <>❌ The answer was <b>{movie.title}</b>.</>
-            }
+          <div style={scoreBoxStyle}>
+            Score: {score} / {NUM_ROUNDS * 5}
           </div>
-          {clueCount > 0 && (
-            <div className="kv-hint-row">
-              <b>Clues used ({clueCount}/2):</b>
-              <ul style={{ marginTop: 3, marginBottom: 0 }}>
-                {clues.slice(0, clueCount).map((clue, i) => (
-                  <li key={i}>{clue}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {/* If this was a manual 'Reveal Answer', skip showing button & auto-advance */}
-          {showResult !== "reveal" && (
-            <>
-              <button
-                className="kv-btn"
-                onClick={() => {
+        </div>
+        <h2>
+          Guess the Movie: Blurred Poster<br />
+          <span style={{ fontSize: "1rem", color: "#a88203" }}>
+            Round {round + 1} / {NUM_ROUNDS}
+          </span>
+        </h2>
+        <div className="kv-blur-poster-row">
+          <img
+            src={getPosterUrl(movie.poster_path)}
+            style={{
+              filter: `blur(${BLUR_STEPS[attempt]}px)`,
+              width: 220,
+              borderRadius: 16,
+              background: "#232",
+            }}
+            alt="Movie Blurred Poster"
+          />
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <button
+            className="kv-btn kv-btn-accent"
+            style={{
+              background: clueCount >= 2 ? "#FFD60088" : undefined,
+              color: clueCount >= 2 ? "#444" : undefined,
+              cursor: cluesLoading || clueCount >= 2 ? "not-allowed" : "pointer",
+              marginRight: 8,
+              minWidth: 90,
+            }}
+            onClick={handleGetClue}
+            disabled={cluesLoading || clueCount >= 2}
+          >
+            {cluesLoading ? "Loading..." : clueCount < 2 ? "Get Clue" : "No More Clues"}
+          </button>
+          <span style={{ color: "#a88203", fontSize: "1.01rem" }}>
+            {clueCount} / 2 clues used
+          </span>
+        </div>
+        {clueCount > 0 && (
+          <div className="kv-hint-row">
+            <b>Clue{clueCount > 1 ? "s" : ""}:</b>
+            <ul style={{ marginTop: 3, marginBottom: 0 }}>
+              {clues.slice(0, clueCount).map((clue, i) => (
+                <li key={i}>{clue}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {showResult === null ? (
+          <>
+            <form className="kv-guess-form" onSubmit={handleGuess}>
+              <input
+                className="kv-guess-input"
+                type="text"
+                placeholder="Type the movie name..."
+                value={userGuess}
+                onChange={e => setUserGuess(e.target.value)}
+                maxLength={40}
+                required
+                autoFocus
+              />
+              <button className="kv-btn">Guess</button>
+            </form>
+            <div className="kv-hint-row">{MAX_ATTEMPTS - attempt} tries left.</div>
+            <button
+              className="kv-btn kv-btn-accent"
+              style={{ marginTop: 13, marginLeft: 6, background: "#FFD600", color: "#2d2d2d" }}
+              onClick={() => {
+                setShowResult("reveal");
+                setAnswers(a => [...a, { correct: false, title: movie.title }]);
+                setTimeout(() => {
                   if (round + 1 < NUM_ROUNDS) handleNext();
-                  else setRound(NUM_ROUNDS); // go to final view
-                }}
-                style={{ marginTop: 11 }}
-              >
-                {round + 1 < NUM_ROUNDS ? "Next Poster" : "See My Score"}
-              </button>
-              <div className="kv-hint-row">{NUM_ROUNDS - (round + 1)} more quiz{NUM_ROUNDS - (round + 1) === 1 ? "" : "zes"} left</div>
-            </>
-          )}
-        </>
-      )}
+                  else setRound(NUM_ROUNDS);
+                }, 1500);
+              }}
+            >
+              Reveal Answer
+            </button>
+          </>
+        ) : (
+          <>
+            <div className={showResult === "win" ? "kv-result-win" : "kv-result-lose"}>
+              {showResult === "win"
+                ? <>🎉 Correct! It was <b>{movie.title}</b>.</>
+                : <>❌ The answer was <b>{movie.title}</b>.</>
+              }
+            </div>
+            {clueCount > 0 && (
+              <div className="kv-hint-row">
+                <b>Clues used ({clueCount}/2):</b>
+                <ul style={{ marginTop: 3, marginBottom: 0 }}>
+                  {clues.slice(0, clueCount).map((clue, i) => (
+                    <li key={i}>{clue}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {showResult !== "reveal" && (
+              <>
+                <button
+                  className="kv-btn"
+                  onClick={() => {
+                    if (round + 1 < NUM_ROUNDS) handleNext();
+                    else setRound(NUM_ROUNDS);
+                  }}
+                  style={{ marginTop: 11 }}
+                >
+                  {round + 1 < NUM_ROUNDS ? "Next Poster" : "See My Score"}
+                </button>
+                <div className="kv-hint-row">{NUM_ROUNDS - (round + 1)} more quiz{NUM_ROUNDS - (round + 1) === 1 ? "" : "zes"} left</div>
+              </>
+            )}
+          </>
+        )}
+      </>
+    );
+  }
+
+  // --- Main Render (all hooks above, no conditional hook usage!) ---
+  return (
+    <div className="kv-game-modal">
+      {mainContent}
     </div>
   );
 }
