@@ -7,8 +7,41 @@ const BLUR_STEPS = [12, 6, 2, 0];
 const MAX_ATTEMPTS = 3;
 const NUM_ROUNDS = 10;
 
+// Helper: Get main cast/actor clue by fetching TMDb credits
+async function getCastClue(movieId) {
+  const url = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=5bc67d3b06aecbd18121a3cbbc16eb59`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const data = await response.json();
+    const cast = (data.cast || []).slice(0, 3).map(m => m.name).filter(Boolean);
+    if (cast.length > 0) return "Stars: " + cast.join(", ");
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function normalizeTitle(title) {
   return (title || "").replace(/[^a-z0-9]/gi, "").toLowerCase();
+}
+
+// Generate up to two clues for a poster. First is year, second is actor/cast.
+async function getCluesForMovie(movie) {
+  // 1. Clue 1: Release year
+  const clues = [];
+  if (movie.release_date) {
+    const year = new Date(movie.release_date).getFullYear();
+    clues.push("Release year: " + year);
+  }
+  // 2. Clue 2: Cast/actor, using TMDb or fallback to none.
+  const actorClue = await getCastClue(movie.id);
+  if (actorClue) clues.push(actorClue);
+  // If not, fallback to a simple generic clue
+  if (clues.length < 2 && movie.title) {
+    clues.push("Title contains: " + movie.title.split(" ")[0]);
+  }
+  return clues;
 }
 
 // PUBLIC_INTERFACE
@@ -22,6 +55,10 @@ export default function BlurredPosterGame() {
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(null); // 'win'/'lose'/null
   const [answers, setAnswers] = useState([]);
+  // State for clues
+  const [clueCount, setClueCount] = useState(0);  // How many clues revealed for current poster
+  const [clues, setClues] = useState([]);         // Array of clues for current poster
+  const [cluesLoading, setCluesLoading] = useState(false);
 
   // Fetch movies for all rounds at once
   useEffect(() => {
@@ -45,23 +82,52 @@ export default function BlurredPosterGame() {
       setMovies(chosen);
       setAnswers([]); // reset per session
       setRound(0); setScore(0); setAttempt(0); setShowResult(null); setUserGuess("");
+      setClueCount(0); setClues([]); setCluesLoading(false);
       setLoading(false);
     }
     loadMovies();
     // eslint-disable-next-line
   }, []);
-  
+
+  // If a new round/movie, reset clues
+  useEffect(() => {
+    setClueCount(0);
+    setClues([]);
+    setCluesLoading(false);
+  }, [round]);
+
   // Fetch next poster (essentially update state for next round)
   function nextPoster() {
     setAttempt(0);
     setShowResult(null);
     setUserGuess("");
+    setClueCount(0);
+    setClues([]);
+    setCluesLoading(false);
   }
 
   if (loading) return <div style={{ minHeight: 250 }}>Loading movie posters...</div>;
   if (!movies[round]) return <div style={{ minHeight: 250 }}>No movie found for this round.</div>;
 
   const movie = movies[round];
+
+  // Handler for clue button
+  const handleGetClue = async () => {
+    if (clueCount >= 2) return;
+    if (clues.length >= clueCount + 1) {
+      // Already available, just increment
+      setClueCount(clueCount + 1);
+      return;
+    }
+    setCluesLoading(true);
+    // Fetch clues only once per movie per game
+    const fullClues = clues.length
+      ? clues
+      : await getCluesForMovie(movie);
+    setClues(fullClues);
+    setClueCount(clueCount + 1);
+    setCluesLoading(false);
+  };
 
   function handleGuess(e) {
     e.preventDefault();
@@ -87,6 +153,9 @@ export default function BlurredPosterGame() {
       setAttempt(0);
       setShowResult(null);
       setUserGuess("");
+      setClueCount(0);
+      setClues([]);
+      setCluesLoading(false);
     }
   }
 
@@ -127,6 +196,17 @@ export default function BlurredPosterGame() {
         ) : (
           <div className="kv-result-lose">
             ❌ Sorry, the answer was <b>{movie.title}</b>.
+          </div>
+        )}
+        {/* Show clues summary if clues used */}
+        {clueCount > 0 && (
+          <div className="kv-hint-row">
+            <b>Clues used ({clueCount}/2):</b>
+            <ul style={{ marginTop: 3, marginBottom: 0 }}>
+              {clues.slice(0, clueCount).map((clue, i) => (
+                <li key={i}>{clue}</li>
+              ))}
+            </ul>
           </div>
         )}
         <button className="kv-btn" onClick={handleFinish} style={{ marginTop: 10 }}>
@@ -185,6 +265,37 @@ export default function BlurredPosterGame() {
           alt="Movie Blurred Poster"
         />
       </div>
+      {/* Clue Button logic */}
+      <div style={{ marginBottom: 8 }}>
+        <button
+          className="kv-btn kv-btn-accent"
+          style={{
+            background: clueCount >= 2 ? "#FFD60088" : undefined,
+            color: clueCount >= 2 ? "#444" : undefined,
+            cursor: cluesLoading || clueCount >= 2 ? "not-allowed" : "pointer",
+            marginRight: 8,
+            minWidth: 90,
+          }}
+          onClick={handleGetClue}
+          disabled={cluesLoading || clueCount >= 2}
+        >
+          {cluesLoading ? "Loading..." : clueCount < 2 ? "Get Clue" : "No More Clues"}
+        </button>
+        <span style={{ color: "#a88203", fontSize: "1.01rem" }}>
+          {clueCount} / 2 clues used
+        </span>
+      </div>
+      {/* Render revealed clues */}
+      {clueCount > 0 && (
+        <div className="kv-hint-row">
+          <b>Clue{clueCount > 1 ? "s" : ""}:</b>
+          <ul style={{ marginTop: 3, marginBottom: 0 }}>
+            {clues.slice(0, clueCount).map((clue, i) => (
+              <li key={i}>{clue}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {showResult === null ? (
         <>
           <form className="kv-guess-form" onSubmit={handleGuess}>
@@ -211,6 +322,17 @@ export default function BlurredPosterGame() {
           ) : (
             <div className="kv-result-lose">
               ❌ Sorry, the answer was <b>{movie.title}</b>.
+            </div>
+          )}
+          {/* Show clues summary at round end, if clues were revealed */}
+          {clueCount > 0 && (
+            <div className="kv-hint-row">
+              <b>Clues used ({clueCount}/2):</b>
+              <ul style={{ marginTop: 3, marginBottom: 0 }}>
+                {clues.slice(0, clueCount).map((clue, i) => (
+                  <li key={i}>{clue}</li>
+                ))}
+              </ul>
             </div>
           )}
           <button
