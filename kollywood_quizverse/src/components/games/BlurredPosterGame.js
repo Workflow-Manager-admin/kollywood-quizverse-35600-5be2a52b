@@ -172,15 +172,9 @@ export default function BlurredPosterGame({ standalone }) {
     setCluesLoading(false);
   }, [round]);
 
-  // Last round, just finished: show result for 2.6s & auto home
-  useEffect(() => {
-    if (standalone && round === NUM_ROUNDS - 1 && showResult !== null) {
-      const timeout = setTimeout(() => {
-        handleFinish();
-      }, 2600);
-      return () => clearTimeout(timeout);
-    }
-  }, [standalone, round, showResult, handleFinish]);
+  // Last round, just finished: show result (do not auto home)
+  // Remove auto-redirect after game completion for consistency
+  // Display score/results; Back button will be present for user to go back at their pace
 
   // --- No early returns for hooks ---
   // Instead, assign variables to conditionally render below
@@ -204,7 +198,7 @@ export default function BlurredPosterGame({ standalone }) {
     mainContent = <div style={{ minHeight: 250 }}>No movie found for this round.</div>;
   }
   else if (round === NUM_ROUNDS - 1 && showResult !== null) {
-    // Just finished the last round, show result for 2.5s, then redirect
+    // Just finished the last round, show result (NO auto-redirect!)
     mainContent = (
       <div>
         <div style={headerRowStyle}>
@@ -212,8 +206,6 @@ export default function BlurredPosterGame({ standalone }) {
             className="kv-btn kv-btn-accent"
             style={{ minWidth: 58 }}
             onClick={handleGoBack}
-            disabled={standalone}
-            title={standalone ? "Returning to home..." : ""}
           >
             &larr; Back
           </button>
@@ -253,15 +245,10 @@ export default function BlurredPosterGame({ standalone }) {
             </ul>
           </div>
         )}
-        {standalone ? (
-          <div style={{ marginTop: 12, fontSize: 13, color: "#969600" }}>
-            Returning to home in 2.5 seconds...
-          </div>
-        ) : (
-          <button className="kv-btn" onClick={handleFinish} style={{ marginTop: 10 }}>
-            See My Score
-          </button>
-        )}
+        {/* Results only, user can go Back or navigate at leisure */}
+        <div style={{ marginTop: 12, color: "#439638", fontWeight: 500 }}>
+          Quiz complete. Use 'Back' to return or refresh for new game!
+        </div>
       </div>
     );
   }

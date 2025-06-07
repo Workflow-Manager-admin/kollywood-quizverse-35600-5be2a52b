@@ -71,16 +71,7 @@ export default function SpeedRoundGame({ standalone }) {
     // eslint-disable-next-line
   }, [started, done]);
 
-  // Results/final summary screen: auto-home on standalone
-  useEffect(() => {
-    if (standalone && done) {
-      const timeout = setTimeout(() => {
-        handleCloseOrHome();
-      }, 2600);
-      return () => clearTimeout(timeout);
-    }
-    // eslint-disable-next-line
-  }, [standalone, done]);
+  // Remove auto-home on standalone. User must click Back/Go Home after seeing results.
 
   function handleGoBack() {
     if (standalone) {
@@ -191,8 +182,8 @@ export default function SpeedRoundGame({ standalone }) {
           </small>
         </div>
         {standalone ? (
-          <div style={{ marginTop: 10, color: "#969600", fontSize: 13 }}>
-            Returning to home in 2.5 seconds...
+          <div style={{ marginTop: 10, color: "#439638", fontSize: 13, fontWeight: 500 }}>
+            Speed Round complete. Use 'Back' to return or refresh for new challenge!
           </div>
         ) : null}
         <button className="kv-btn" onClick={handleCloseOrHome} disabled={standalone}>

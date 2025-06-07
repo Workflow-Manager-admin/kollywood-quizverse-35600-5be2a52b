@@ -57,14 +57,8 @@ export default function CharMovieMatchGame({ standalone }) {
     // eslint-disable-next-line
   }, [standalone]);
 
-  // Auto redirect for standalone after done
-  useEffect(() => {
-    if (standalone && done) {
-      const timeout = setTimeout(() => handleCloseOrHome(), 2600);
-      return () => clearTimeout(timeout);
-    }
-    // eslint-disable-next-line
-  }, [standalone, done]);
+  // Remove auto-redirect for standalone after done
+  // User can use Back/go home at their discretion after seeing score/results
 
   function handleDrop(e, movId) {
     const char = e.dataTransfer.getData("text/plain");
@@ -186,8 +180,8 @@ export default function CharMovieMatchGame({ standalone }) {
         <div style={{ marginTop: 14 }}>
           <b>Final Score: {score} / {sample.length}</b>
           {standalone ? (
-            <div style={{ color: "#969600", fontSize: 13, marginTop: 7 }}>
-              Returning to home in 2.5 seconds...
+            <div style={{ color: "#439638", fontSize: 13, marginTop: 7, fontWeight: 500 }}>
+              Game complete. Use 'Back' to return or refresh for a new game!
             </div>
           ) : null}
           <button

@@ -82,16 +82,8 @@ export default function SixDegreesGame({ standalone }) {
     </div>
   );
 
-  // Auto-home redirect after result for standalone
-  React.useEffect(() => {
-    if (standalone && result) {
-      const timeout = setTimeout(() => {
-        handleCloseOrHome();
-      }, 2600);
-      return () => clearTimeout(timeout);
-    }
-    // eslint-disable-next-line
-  }, [standalone, result]);
+  // Remove auto-home redirect for standalone.
+  // User navigates manually after seeing connection result/score.
 
   return (
     <div className="kv-game-modal">
@@ -136,7 +128,9 @@ export default function SixDegreesGame({ standalone }) {
             Session complete! Score: 5 / 5
           </div>
           {standalone ? (
-            <div style={{ color: "#969600", fontSize: 13, marginTop: 5 }}>Returning to home in 2.5 seconds...</div>
+            <div style={{ color: "#439638", fontSize: 13, marginTop: 5, fontWeight: 500 }}>
+              Game complete. Use 'Back' to return or refresh for a new search!
+            </div>
           ) : null}
           <button
             className="kv-btn"

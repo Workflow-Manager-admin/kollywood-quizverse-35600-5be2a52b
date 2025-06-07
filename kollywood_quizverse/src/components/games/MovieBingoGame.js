@@ -51,14 +51,7 @@ export default function MovieBingoGame({ standalone }) {
     // eslint-disable-next-line
   }, [standalone]);
 
-  // Add effect for standlone auto home
-  useEffect(() => {
-    if (standalone && done) {
-      const timeout = setTimeout(() => handleCloseOrHome(), 2600);
-      return () => clearTimeout(timeout);
-    }
-    // eslint-disable-next-line
-  }, [standalone, done]);
+  // Remove effect for standalone auto home. Users navigate manually after completion.
 
   // "Back" button for page
   function handleGoBack() {
@@ -184,8 +177,8 @@ export default function MovieBingoGame({ standalone }) {
             Bingo! Final Score: {score} / {BINGO_CATEGORIES.length}
           </div>
           {standalone ? (
-            <div style={{ color: "#969600", fontSize: 13, marginTop: 7 }}>
-              Returning to home in 2.5 seconds...
+            <div style={{ color: "#439638", fontSize: 13, marginTop: 7, fontWeight: 500 }}>
+              Bingo complete. Use 'Back' to return or refresh for a new game!
             </div>
           ) : null}
           <button

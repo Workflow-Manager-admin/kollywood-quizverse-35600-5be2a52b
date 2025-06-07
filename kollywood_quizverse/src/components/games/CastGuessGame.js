@@ -160,16 +160,8 @@ export default function CastGuessGame({ standalone }) {
     display: "inline-block"
   };
 
-  // Quiz complete summary effect, must always run
-  useEffect(() => {
-    if (standalone && state.done) {
-      const timeout = setTimeout(() => {
-        handleCloseOrHome();
-      }, 2600);
-      return () => clearTimeout(timeout);
-    }
-    // eslint-disable-next-line
-  }, [standalone, state.done]);
+  // Quiz complete: NO auto-redirect. User must act to leave.
+  // Remove the effect that auto-redirects on quiz completion.
 
   // --- Main conditional UI content assigned to content variable for return ---
   let content;
@@ -210,8 +202,8 @@ export default function CastGuessGame({ standalone }) {
           </small>
         </div>
         {standalone ? (
-          <div style={{ marginTop: 10, color: "#969600", fontSize: 13 }}>
-            Returning to home in 2.5 seconds...
+          <div style={{ marginTop: 10, color: "#439638", fontSize: 13, fontWeight: 500 }}>
+            Quiz complete. Use 'Back' to return or refresh for a new game!
           </div>
         ) : (
           <button className="kv-btn" onClick={handleCloseOrHome}>
