@@ -9,13 +9,22 @@ import SpeedRoundGame from "./games/SpeedRoundGame";
 import BuffCertGame from "./games/BuffCertGame";
 import "./GameModalManager.css";
 
+import { useLocation } from "react-router-dom";
+
 // PUBLIC_INTERFACE
 export default function GameModalManager() {
   const { state, dispatch } = useContext(QuizContext);
+  const location = useLocation();
 
+  // Don't show the modal for BlurredPosterGame if we're already on its page route
   let modalContent = null;
   switch (state.modal) {
     case "blurredPoster":
+      if (location.pathname === "/blurred-poster-game") {
+        // Prevent modal if already at game page
+        modalContent = null;
+        break;
+      }
       modalContent = <BlurredPosterGame />;
       break;
     case "castGuess":

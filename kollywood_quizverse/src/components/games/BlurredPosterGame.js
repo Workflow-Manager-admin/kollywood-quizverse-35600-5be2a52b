@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { fetchPopularTamilMovies, getPosterUrl } from "../../tmdbApi";
 import { QuizContext } from "../../context/QuizContext";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./BlurredPosterGame.css";
 
 const BLUR_STEPS = [12, 6, 2, 0];
@@ -45,7 +46,7 @@ async function getCluesForMovie(movie) {
 }
 
 // PUBLIC_INTERFACE
-export default function BlurredPosterGame() {
+export default function BlurredPosterGame({ standalone }) {
   const { dispatch } = useContext(QuizContext);
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -59,6 +60,9 @@ export default function BlurredPosterGame() {
   const [clueCount, setClueCount] = useState(0);  // How many clues revealed for current poster
   const [clues, setClues] = useState([]);         // Array of clues for current poster
   const [cluesLoading, setCluesLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Fetch movies for all rounds at once
   useEffect(() => {
@@ -169,7 +173,12 @@ export default function BlurredPosterGame() {
         time: new Date().toLocaleString(),
       },
     });
-    dispatch({ type: "CLOSE_MODAL" });
+    if (standalone) {
+      // go to dashboard on finish in standalone/page mode
+      navigate("/");
+    } else {
+      dispatch({ type: "CLOSE_MODAL" });
+    }
   }
 
   // Render results if finished
@@ -238,7 +247,16 @@ export default function BlurredPosterGame() {
             </ul>
           </small>
         </div>
-        <button className="kv-btn" onClick={() => dispatch({ type: "CLOSE_MODAL" })}>
+        <button
+          className="kv-btn"
+          onClick={() => {
+            if (standalone) {
+              navigate("/");
+            } else {
+              dispatch({ type: "CLOSE_MODAL" });
+            }
+          }}
+        >
           Close
         </button>
       </div>

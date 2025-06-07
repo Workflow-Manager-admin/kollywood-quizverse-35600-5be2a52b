@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { QuizContext } from "../context/QuizContext";
+import { useNavigate } from "react-router-dom";
 import "./HomeDashboard.css";
 
 const games = [
@@ -49,15 +50,20 @@ const games = [
 
 // PUBLIC_INTERFACE
 export default function HomeDashboard() {
-  const { dispatch, state } = useContext(QuizContext);
+  const { dispatch } = useContext(QuizContext);
+  const navigate = useNavigate();
 
   function openGameModal(gameKey) {
-    dispatch({ type: "OPEN_MODAL", payload: { name: gameKey } });
+    if (gameKey === "blurredPoster") {
+      navigate("/blurred-poster-game");
+    } else {
+      dispatch({ type: "OPEN_MODAL", payload: { name: gameKey } });
+    }
   }
   return (
     <div className="kv-home-dashboard">
       <h1 className="kv-page-title">Kollywood QuizVerse</h1>
-      <div className="kv-page-desc">Multiple quiz &amp; game modes—powered by real Kollywood movie data!</div>
+      <div className="kv-page-desc">Multiple quiz & game modes—powered by real Kollywood movie data!</div>
       <div className="kv-game-grid">
         {games.map(game => (
           <div className="kv-game-card" key={game.key}>

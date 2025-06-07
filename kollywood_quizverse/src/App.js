@@ -8,31 +8,40 @@ import GameModalManager from "./components/GameModalManager";
 import ProfileScreen from "./components/ProfileScreen";
 import LeaderboardScreen from "./components/LeaderboardScreen";
 import ScoreHistoryScreen from "./components/ScoreHistoryScreen";
+import BlurredPosterGame from "./components/games/BlurredPosterGame";
+
+// React Router imports
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 // PUBLIC_INTERFACE
-function KollywoodQuizVerseApp() {
+function KollywoodQuizVerseAppWithRouter() {
   const { state } = useContext(QuizContext);
+  const location = useLocation();
 
-  let content;
   if (!state.user) {
-    content = <LoginScreen />;
-  } else if (state.screen === "home") {
-    content = <HomeDashboard />;
-  } else if (state.screen === "profile") {
-    content = <ProfileScreen />;
-  } else if (state.screen === "leaderboard") {
-    content = <LeaderboardScreen />;
-  } else if (state.screen === "scoreHistory") {
-    content = <ScoreHistoryScreen />;
-  } else {
-    content = <HomeDashboard />; // fallback to dashboard
+    // Always redirect any route to login if not logged in
+    return (
+      <>
+        <Navbar />
+        <main className="kv-main-content"><LoginScreen /></main>
+      </>
+    );
   }
+
   return (
     <div className="app kv-theme">
       <Navbar />
       <main className="kv-main-content">
-        {content}
-        <GameModalManager />
+        <Routes>
+          <Route path="/" element={<HomeDashboard />} />
+          <Route path="/blurred-poster-game" element={<BlurredPosterGame standalone={true} />} />
+          <Route path="/profile" element={<ProfileScreen />} />
+          <Route path="/leaderboard" element={<LeaderboardScreen />} />
+          <Route path="/score-history" element={<ScoreHistoryScreen />} />
+          <Route path="*" element={<HomeDashboard />} />
+        </Routes>
+        {/* Only show GameModalManager if NOT on blurred-poster-game route */}
+        {location.pathname !== "/blurred-poster-game" && <GameModalManager />}
       </main>
     </div>
   );
@@ -40,9 +49,12 @@ function KollywoodQuizVerseApp() {
 
 // PUBLIC_INTERFACE
 export default function App() {
+  // Wrap in BrowserRouter for routing context
   return (
     <QuizProvider>
-      <KollywoodQuizVerseApp />
+      <BrowserRouter>
+        <KollywoodQuizVerseAppWithRouter />
+      </BrowserRouter>
     </QuizProvider>
   );
 }
