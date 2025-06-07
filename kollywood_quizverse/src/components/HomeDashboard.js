@@ -56,6 +56,8 @@ export default function HomeDashboard() {
   function openGameModal(gameKey) {
     if (gameKey === "blurredPoster") {
       navigate("/blurred-poster-game");
+    } else if (gameKey === "castGuess") {
+      navigate("/cast-guess-game");
     } else {
       dispatch({ type: "OPEN_MODAL", payload: { name: gameKey } });
     }
