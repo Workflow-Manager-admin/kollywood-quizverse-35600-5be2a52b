@@ -1,0 +1,88 @@
+.kv-game-modal {
+  text-align: center;
+  background: none;
+  font-family: inherit;
+}
+
+.kv-cert-lvl {
+  background: var(--kv-accent, #FFD600);
+  color: var(--kv-primary, #D32F2F);
+  padding: 2px 12px;
+  border-radius: 15px;
+  font-size: 1.01rem;
+  vertical-align: middle;
+  margin-left: 8px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.kv-cert-options {
+  margin: 24px 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.kv-cert-btn {
+  background: var(--kv-card-bg, #fff9f7);
+  color: var(--kv-primary, #D32F2F);
+  border: 2px solid var(--kv-accent, #FFD600);
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.13rem;
+  padding: 13px 0;
+  width: 200px;
+  box-shadow: 0 2px 7px #ffe8ba38;
+  margin-bottom: 2px;
+  transition: border 0.14s, background 0.13s;
+  cursor: pointer;
+}
+
+.kv-cert-btn:hover, .kv-cert-btn:focus {
+  background: var(--kv-accent, #FFD600);
+  color: var(--kv-secondary, #212121);
+  border: 2px solid var(--kv-primary, #D32F2F);
+}
+
+.kv-cert-progress {
+  margin: 14px 0 8px 0;
+  font-size: 1.08rem;
+  color: var(--kv-secondary, #212121);
+  font-weight: 500;
+}
+
+.kv-cert-score {
+  font-size: 1.12rem;
+  margin-top: 16px;
+  color: var(--kv-primary, #D32F2F);
+  font-weight: 600;
+}
+
+.kv-cert-score .kv-btn {
+  margin-top: 17px;
+}
+
+.kv-cert-share {
+  background: var(--kv-primary, #D32F2F);
+  color: #fff;
+  border-radius: 7px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  transition: background 0.14s;
+  margin-top: 7px;
+}
+
+.kv-cert-share:hover, .kv-cert-share:focus {
+  background: var(--kv-accent, #FFD600);
+  color: var(--kv-primary, #D32F2F);
+}
+
+@media (max-width: 600px) {
+  .kv-cert-btn {
+    width: 93vw;
+    min-width: 0;
+  }
+}

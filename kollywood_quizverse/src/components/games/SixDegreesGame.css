@@ -1,0 +1,45 @@
+.kv-game-modal {
+  text-align: center;
+  font-family: inherit;
+  background: none;
+}
+
+.kv-sixdeg-input {
+  border: 1px solid var(--kv-accent, #FFD600);
+  border-radius: 8px;
+  padding: 9px 11px;
+  font-size: 1.07rem;
+  margin: 0 8px 8px 0;
+  width: 140px;
+  outline: none;
+  transition: border 0.14s;
+  color: var(--kv-secondary, #212121);
+  background: #fffbe9;
+}
+
+.kv-sixdeg-input:focus {
+  border: 1.5px solid var(--kv-primary, #D32F2F);
+  background: #fffde0;
+}
+
+.kv-sixdeg-result {
+  margin-top: 18px;
+  font-size: 1.12rem;
+  color: var(--kv-primary, #D32F2F);
+  background: var(--kv-card-bg, #fff9f7);
+  border-radius: 11px;
+  box-shadow: 0 1px 7px #ffd79592;
+  padding: 18px 16px 11px 16px;
+}
+
+.kv-sixdeg-result b {
+  color: var(--kv-accent, #FFD600);
+  font-size: 1.08em;
+}
+
+@media (max-width: 500px) {
+  .kv-sixdeg-input {
+    width: 85vw;
+    margin-bottom: 8px;
+  }
+}

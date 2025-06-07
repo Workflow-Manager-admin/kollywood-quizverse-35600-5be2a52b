@@ -1,0 +1,67 @@
+.kv-game-modal {
+  text-align: center;
+  font-family: inherit;
+  background: none;
+}
+
+.kv-speed-timer {
+  font-size: 1.23rem;
+  font-weight: 700;
+  background: var(--kv-accent, #FFD600);
+  color: var(--kv-primary, #D32F2F);
+  display: inline-block;
+  padding: 4px 22px;
+  border-radius: 17px;
+  margin: 10px 0 18px 0;
+  letter-spacing: 1px;
+  border: 2px solid var(--kv-primary, #D32F2F);
+}
+
+.kv-speed-q {
+  font-size: 1.10rem;
+  color: var(--kv-primary, #D32F2F);
+  margin-bottom: 19px;
+  font-weight: 600;
+}
+
+.kv-speed-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 8px;
+}
+
+.kv-speed-opt-btn {
+  background: #fffbe9;
+  color: var(--kv-primary, #D32F2F);
+  border: 2px solid var(--kv-accent, #FFD600);
+  border-radius: 10px;
+  font-size: 1.12rem;
+  font-weight: 600;
+  padding: 12px 0;
+  width: 180px;
+  margin-bottom: 2px;
+  transition: border 0.15s, background 0.12s;
+  cursor: pointer;
+}
+
+.kv-speed-opt-btn:hover, .kv-speed-opt-btn:focus {
+  background: var(--kv-primary, #D32F2F);
+  color: #fff;
+  border: 2px solid var(--kv-accent, #FFD600);
+}
+
+.kv-speed-result {
+  margin-top: 22px;
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--kv-primary, #D32F2F);
+}
+
+@media (max-width: 540px) {
+  .kv-speed-opt-btn {
+    width: 98vw;
+    min-width: 0;
+  }
+}
