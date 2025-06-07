@@ -1,0 +1,32 @@
+.kv-login-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background: linear-gradient(120deg, #fff 60%, #ffd7c3 100%);
+}
+.kv-login-card {
+  background: var(--kv-card-bg);
+  border-radius: 17px;
+  box-shadow: 0 3px 18px 2px #ffe4e5ad;
+  padding: 48px 38px 33px 38px;
+  min-width: 320px;
+  max-width: 98vw;
+  text-align: center;
+}
+.kv-login-input {
+  margin-bottom: 22px;
+  padding: 12px 20px;
+  font-size: 1.14rem;
+  border-radius: 7px;
+  border: 1px solid #eaeaea;
+  width: 77%;
+}
+.kv-login-error {
+  color: #d32f2f; font-weight: 600;
+}
+.kv-login-description {
+  color: #6C6C6C;
+  margin-top: 12px;
+  font-size: 0.95rem;
+}

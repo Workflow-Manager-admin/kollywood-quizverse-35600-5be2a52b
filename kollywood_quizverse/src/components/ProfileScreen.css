@@ -1,0 +1,20 @@
+.kv-profile-screen {
+  max-width: 444px;
+  margin: 0 auto;
+  background: var(--kv-card-bg);
+  border-radius: 15px;
+  padding: 32px 24px 20px 24px;
+  box-shadow: 0 1px 8px #eabb99ad;
+  text-align: center;
+}
+.kv-profile-avatar-large {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 2.5rem;
+  background: var(--kv-primary); color: #fff;
+  width: 62px; height: 62px; border-radius: 50%;
+  margin-bottom: 17px;
+}
+.kv-profile-summary > div {
+  font-size: 1.16rem;
+  margin-bottom: 9px;
+}

@@ -4,15 +4,131 @@
   --text-color: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
   --border-color: rgba(255, 255, 255, 0.1);
+
+  /* Kollywood QuizVerse theme -- override/apply for kv-theme */
+  --kv-primary: #D32F2F;
+  --kv-secondary: #212121;
+  --kv-accent: #FFD600;
+  --kv-navbar: var(--kv-secondary);
+  --kv-panel: #fffbe9;
+  --kv-card: #fff8f6;
+  --kv-text-main: #1a1a1a;
+  --kv-text-light: #fff;
+  --kv-card-bg: #fff9f7;
 }
 
 body {
   margin: 0;
   font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  background-color: var(--base-dark);
+  background-color: var(--kv-secondary);
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.kv-theme {
+  --base-light: var(--kv-primary);
+  --base-dark: var(--kv-secondary);
+  --text-color: var(--kv-text-main);
+  --border-color: #e3e3e3;
+  --text-secondary: #7D7D7D;
+  background: linear-gradient(120deg,#fffbe9 0%,#ffd7c3 70%,#fff5e1 100%);
+  min-height: 100vh;
+}
+
+.kv-main-content {
+  margin-top: 70px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 16px 64px;
+  min-height: 80vh;
+}
+
+.kv-navbar {
+  background: var(--kv-navbar);
+  color: var(--kv-accent);
+  box-shadow: 0 1px 6px rgba(44,30,30,0.06);
+  padding: 0;
+  min-height: 56px;
+  border-bottom: 2px solid var(--kv-accent);
+  position: fixed;
+  width: 100vw;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+}
+.kv-navbar-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 1150px; margin: 0 auto; padding: 0 24px;
+  height: 56px;
+}
+.kv-navbar-brand {
+  font-weight: 700; font-size: 1.3rem;
+  color: var(--kv-accent);
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+}
+.kv-logo-symbol { font-size: 2rem; color: var(--kv-primary); }
+.kv-navbar-links { display: flex; align-items: center; gap: 12px; }
+.kv-nav-btn {
+  background: none;
+  color: var(--kv-accent);
+  border: none;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.kv-nav-btn:hover, .kv-btn:hover { background: var(--kv-accent); color: var(--kv-secondary);}
+.kv-navbar-user { margin-left: 10px; }
+.kv-profile-avatar {
+  display: inline-block;
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--kv-primary);
+  color: #fff; font-weight: 700; font-size: 1.15rem;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--kv-accent);
+}
+
+.kv-btn, .kv-btn-accent, .kv-btn-large {
+  background: var(--kv-primary); color: #fff;
+  border: none; border-radius: 6px; padding: 9px 18px; font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer; transition: filter 0.2s;
+  box-shadow: 0 2px 8px #e2e2e2be;
+}
+.kv-btn-accent { background: var(--kv-accent); color: var(--kv-secondary);}
+.kv-btn-large { font-size: 1.16rem; padding: 14px 30px;}
+.kv-btn:active { filter: brightness(0.92); }
+
+.kv-tmdb-attr {
+  margin-top: 32px;
+  font-size: 1rem;
+  color: #666;
+  text-align: center;
+}
+
+.kv-modal-overlay {
+  background: rgba(34,29,29,0.45);
+  position: fixed; left: 0; top: 0; right: 0; bottom: 0;
+  z-index: 1100;
+  display: flex; align-items: center; justify-content: center;
+}
+.kv-modal-content {
+  background: #fff9f7;
+  border-radius: 14px;
+  min-width: 320px; max-width: 480px;
+  box-shadow: 0 8px 45px 1px #dcba893b;
+  padding: 34px 24px 18px 24px;
+  position: relative;
+  color: #1a1a1a;
+}
+.kv-modal-close {
+  position: absolute; right: 16px; top: 14px;
+  color: #B00020; border: none; background: none;
+  font-size: 2.1rem; cursor: pointer; z-index: 20;
 }
 
 .app {

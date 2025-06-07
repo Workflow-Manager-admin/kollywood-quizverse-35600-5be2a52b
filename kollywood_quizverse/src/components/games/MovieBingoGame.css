@@ -1,0 +1,48 @@
+.kv-game-modal {
+  text-align: center;
+}
+
+.kv-bingo-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 16px;
+  margin-top: 9px;
+}
+
+.kv-bingo-cell {
+  background: #fff8e8;
+  border-radius: 11px;
+  min-height: 102px;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 9px 6px 8px 6px;
+  box-shadow: 0 2px 10px #ffe6c3a9;
+  text-align: center;
+}
+
+.kv-bingo-movies {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.kv-bingo-movie,
+.kv-bingo-movie-selected {
+  cursor: pointer;
+  border: 2px solid #ffd600;
+  border-radius: 7px;
+  padding: 3px 2px 0px 2px;
+  background: #fffdf0;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.kv-bingo-movie-selected {
+  border-color: #319a31;
+  background: #d2fbd2;
+}

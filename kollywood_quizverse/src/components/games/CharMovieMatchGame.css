@@ -1,0 +1,76 @@
+.kv-game-modal {
+  text-align: center;
+}
+
+.kv-char-match-info {
+  font-size: 1.07rem;
+  color: #444;
+  margin-bottom: 18px;
+}
+
+.kv-char-match-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.kv-char-match-chars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 110px;
+}
+.kv-char-draggable {
+  background: #ffeda7;
+  color: #a6530a;
+  padding: 9px 13px;
+  border-radius: 7px;
+  box-shadow: 0 2px 6px #f7c67c56;
+  cursor: grab;
+  font-weight: 600;
+  font-size: 1.08rem;
+  transition: background 0.15s;
+}
+
+.kv-char-draggable:active {
+  background: #ffd600af;
+}
+
+.kv-char-match-movies {
+  flex: 2;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+}
+
+.kv-char-dropzone {
+  width: 110px;
+  height: 160px;
+  background: #fff7e4;
+  border: 2px dashed #ffd600;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.13s;
+  position: relative;
+}
+
+.kv-char-dropzone:hover, .kv-char-dropzone:focus {
+  border-color: #d32f2f;
+  background: #fff5ea;
+}
+.kv-drop-label {
+  font-size: 0.97rem;
+  margin-top: 7px;
+  color: #9b6e21;
+  font-weight: 600;
+}

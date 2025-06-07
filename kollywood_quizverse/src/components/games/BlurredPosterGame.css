@@ -1,0 +1,38 @@
+.kv-game-modal {
+  text-align: center;
+}
+.kv-blur-poster-row {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+.kv-guess-form {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.kv-guess-input {
+  border: 1px solid #eed6c3;
+  border-radius: 6px;
+  padding: 9px 13px;
+  font-size: 1.13rem;
+  margin-right: 7px;
+}
+.kv-result-win, .kv-result-lose {
+  font-weight: bold;
+  color: #d32f2f;
+  padding: 13px 0 10px 0;
+  font-size: 1.18rem;
+}
+.kv-result-win {
+  color: #439638;
+}
+.kv-result-lose {
+  color: #d32f2f;
+}
+.kv-hint-row {
+  color: #a88203;
+  margin-top: 6px;
+  font-size: 1.07rem;
+}

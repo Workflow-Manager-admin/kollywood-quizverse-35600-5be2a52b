@@ -1,0 +1,75 @@
+.kv-navbar {
+  background: var(--kv-navbar, #212121);
+  min-height: 56px;
+  border-bottom: 2px solid var(--kv-accent, #FFD600);
+  color: var(--kv-accent, #FFD600);
+  font-family: inherit;
+}
+
+.kv-navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+}
+
+.kv-navbar-brand {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--kv-accent, #FFD600);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.kv-logo-symbol {
+  font-size: 2rem;
+  color: var(--kv-primary, #D32F2F);
+}
+
+.kv-navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kv-nav-btn {
+  background: none;
+  color: var(--kv-accent, #FFD600);
+  border: none;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.kv-nav-btn:hover {
+  background: var(--kv-accent, #FFD600);
+  color: var(--kv-secondary, #212121);
+  outline: none;
+}
+
+.kv-navbar-user {
+  margin-left: 10px;
+}
+
+.kv-profile-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--kv-primary, #D32F2F);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.15rem;
+  border: 2px solid var(--kv-accent, #FFD600);
+}

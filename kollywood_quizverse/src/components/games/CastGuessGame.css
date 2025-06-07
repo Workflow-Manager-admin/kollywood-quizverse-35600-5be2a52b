@@ -1,0 +1,67 @@
+.kv-game-modal {
+  text-align: center;
+}
+
+.kv-cast-row {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 17px;
+  font-size: 1.09rem;
+  flex-wrap: wrap;
+}
+
+.kv-cast-bubble {
+  background: #fbead0;
+  color: #a6530a;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 19px;
+  margin: 0 3px;
+  font-size: 1.1rem;
+}
+
+.kv-cast-choices {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.kv-cast-btn,
+.kv-cast-default {
+  background: #fff7e4;
+  border: 2px solid #ffd600;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  width: 112px;
+  transition: border 0.14s;
+  font-size: 1rem;
+  color: #282200;
+  text-align: center;
+}
+.kv-cast-btn:hover {
+  border: 2px solid #d32f2f;
+}
+
+.kv-cast-correct {
+  background: #c8f9c2;
+  border: 2px solid #319a31;
+  color: #187e18;
+  font-weight: 700;
+}
+.kv-cast-wrong {
+  background: #fae2e2;
+  border: 2px solid #d32f2f;
+  color: #9a2222;
+  font-weight: 600;
+}
+
+.kv-cast-result {
+  margin-top: 16px;
+  font-size: 1.18rem;
+  font-weight: 600;
+}

@@ -1,0 +1,67 @@
+.kv-home-dashboard {
+  padding: 32px 0 0 0;
+  text-align: center;
+}
+
+.kv-page-title {
+  font-size: 2.2rem;
+  color: var(--kv-primary);
+  margin-bottom: 6px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.kv-page-desc {
+  color: var(--kv-secondary);
+  font-weight: 500;
+  margin-bottom: 34px;
+}
+.kv-game-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.kv-game-card {
+  background: var(--kv-card);
+  box-shadow: 0 3px 16px #c1b6af1a;
+  border-radius: 15px;
+  padding: 25px 22px 18px 22px;
+  width: 240px;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+.kv-game-icon {
+  font-size: 2.25rem;
+  margin-bottom: 8px;
+}
+.kv-game-title {
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: var(--kv-primary);
+}
+.kv-game-desc {
+  color: #333;
+  font-size: 1.01rem;
+  margin-bottom: 7px;
+  min-height: 21px;
+}
+.kv-tmdb-attr {
+  color: #888;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+  .kv-game-grid {
+    gap: 16px;
+  }
+  .kv-game-card {
+    width: 96vw;
+    min-width:0;
+    max-width: 96vw;
+  }
+}

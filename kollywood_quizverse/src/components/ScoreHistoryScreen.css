@@ -1,0 +1,20 @@
+.kv-history-screen {
+  max-width: 500px;
+  margin: 0 auto;
+  background: var(--kv-card-bg);
+  border-radius: 14px;
+  padding: 29px 24px;
+  box-shadow: 0 2px 11px #e3b68e3b;
+}
+.kv-history-list {
+  list-style: none; padding: 0; margin-top: 13px;
+}
+.kv-history-entry {
+  display: flex; gap: 12px; align-items: center;
+  background: #ffeeda;
+  margin-bottom: 7px; border-radius: 7px; padding: 7px 14px;
+  font-size: 1.06rem;
+}
+.kv-history-date { color: #69471e; width: 98px; }
+.kv-history-game { color: #d32f2f; font-weight: 600; width: 120px;}
+.kv-history-score { color: #5a8239; font-weight: 700;}

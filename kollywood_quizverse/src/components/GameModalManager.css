@@ -1,0 +1,28 @@
+.kv-modal-overlay {
+  background: rgba(32,17,12,0.25);
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2000;
+}
+
+.kv-modal-content {
+  background: #fff9f7;
+  border-radius: 14px;
+  min-width: 320px;
+  max-width: 460px;
+  box-shadow: 0 9px 38px 2px #eecbaf41;
+  padding: 34px 22px 24px 22px;
+  position: relative;
+  color: #222;
+}
+.kv-modal-close {
+  position: absolute;
+  right: 14px; top: 14px;
+  font-size: 2.25rem;
+  color: #d32f2f;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}

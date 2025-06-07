@@ -1,0 +1,28 @@
+.kv-leaderboard-screen {
+  margin: 0 auto;
+  max-width: 460px;
+  background: var(--kv-card);
+  border-radius: 13px;
+  padding: 29px 18px;
+  box-shadow: 0 1px 12px #c6bdae68;
+}
+.kv-leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 12px;
+}
+.kv-leaderboard-table th, .kv-leaderboard-table td {
+  padding: 7px 5px;
+  border-bottom: 1px solid #e8e8e8;
+  text-align: left;
+}
+.kv-leaderboard-you {
+  background: #ffd7c3;
+  font-weight: bold;
+  color: #d32f2f;
+}
+.kv-leaderboard-note {
+  font-size: 0.93rem;
+  color: #857d69;
+  margin-top: 10px;
+}
