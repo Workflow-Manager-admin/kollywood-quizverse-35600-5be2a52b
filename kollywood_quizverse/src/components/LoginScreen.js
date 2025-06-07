@@ -19,7 +19,7 @@ export default function LoginScreen() {
   return (
     <div className="kv-login-screen">
       <div className="kv-login-card">
-        <h2>Welcome to Kollywood QuizVerse</h2>
+        <h2 style={{ color: "#212121" }}>Welcome to Kollywood QuizVerse</h2>
         <form onSubmit={doLogin}>
           <input
             type="text"
