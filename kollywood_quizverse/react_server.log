@@ -2,43 +2,25 @@
 > react-kavia@0.1.0 start
 > react-scripts start
 
-(node:15990) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(node:18739) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-(node:15990) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(node:18739) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
 Starting the development server...
 
-Failed to compile.
+Compiled successfully!
 
-Module not found: Error: Can't resolve './BuffCertGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
-ERROR in ./src/components/games/BuffCertGame.js 8:0-28
-Module not found: Error: Can't resolve './BuffCertGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
+You can now view react-kavia in the browser.
 
-ERROR in ./src/components/games/SixDegreesGame.js 7:0-30
-Module not found: Error: Can't resolve './SixDegreesGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
+  Local:            http://localhost:3000
+  On Your Network:  http://172.17.0.2:3000
 
-ERROR in ./src/components/games/SpeedRoundGame.js 8:0-30
-Module not found: Error: Can't resolve './SpeedRoundGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
+Note that the development build is not optimized.
+To create a production build, use npm run build.
 
-webpack compiled with 3 errors
+webpack compiled successfully
 Compiling...
-Failed to compile.
-
-Module not found: Error: Can't resolve './SixDegreesGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
-ERROR in ./src/components/games/SixDegreesGame.js 7:0-30
-Module not found: Error: Can't resolve './SixDegreesGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
-
-ERROR in ./src/components/games/SpeedRoundGame.js 8:0-30
-Module not found: Error: Can't resolve './SpeedRoundGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
-
-webpack compiled with 2 errors
-Compiling...
-Failed to compile.
-
-Module not found: Error: Can't resolve './SpeedRoundGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
-ERROR in ./src/components/games/SpeedRoundGame.js 8:0-30
-Module not found: Error: Can't resolve './SpeedRoundGame.css' in '/home/kavia/workspace/code-generation/kollywood-quizverse-35600-5be2a52b/kollywood_quizverse/src/components/games'
-
-webpack compiled with 1 error
+Compiled successfully!
+webpack compiled successfully
 Compiling...
 Compiled successfully!
 webpack compiled successfully
