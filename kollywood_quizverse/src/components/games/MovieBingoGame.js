@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { fetchPopularTamilMovies, getPosterUrl } from "../../tmdbApi";
+import { fetchToughTamilMovies, getPosterUrl } from "../../tmdbApi";
 import { QuizContext } from "../../context/QuizContext";
 import { useNavigate } from "react-router-dom";
 import "./MovieBingoGame.css";
@@ -40,8 +40,8 @@ export default function MovieBingoGame({ standalone }) {
 
   useEffect(() => {
     async function load() {
-      // Fetch enough movies for all categories
-      const data = await fetchPopularTamilMovies(30);
+      // Fetch a broad, tough pool for all bingo categories
+      const data = await fetchToughTamilMovies({ count: 45 });
       setMovies(data.map(m => ({ ...m })));
       setClicked({});
       setDone(false);

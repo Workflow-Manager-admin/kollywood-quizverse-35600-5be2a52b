@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { fetchPopularTamilMovies } from "../../tmdbApi";
+import { fetchToughTamilMovies } from "../../tmdbApi";
 import { QuizContext } from "../../context/QuizContext";
 import { useNavigate } from "react-router-dom";
 import "./SpeedRoundGame.css";
@@ -43,7 +43,7 @@ export default function SpeedRoundGame({ standalone }) {
   // On mount, fetch movie questions
   useEffect(() => {
     async function init() {
-      const movies = await fetchPopularTamilMovies(30);
+      const movies = await fetchToughTamilMovies({ count: 30 });
       setQuestions(makeQuestions(movies));
       setQIdx(0);
       setScore(0);

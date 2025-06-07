@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { fetchPopularTamilMovies, getPosterUrl } from "../../tmdbApi";
+import { fetchToughTamilMovies, getPosterUrl } from "../../tmdbApi";
 import { QuizContext } from "../../context/QuizContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./BlurredPosterGame.css";
@@ -68,24 +68,14 @@ export default function BlurredPosterGame({ standalone }) {
 
   const navigate = useNavigate();
 
-  // Fetch movies for all rounds at once
+  // Fetch a tough (unpopular, less repeated) set of Kollywood movies for game rounds
   useEffect(() => {
     async function loadMovies() {
       setLoading(true);
-      const moviesArr = await fetchPopularTamilMovies(NUM_ROUNDS * 3);
-      // Pick NUM_ROUNDS unique movies randomly (must have poster)
-      let chosen = [];
-      let pickedIdxs = new Set();
-      let filteredMovies = moviesArr.filter(m => !!m.poster_path);
-      if (filteredMovies.length < NUM_ROUNDS) filteredMovies = moviesArr;
-      while (chosen.length < NUM_ROUNDS && filteredMovies.length > 0) {
-        let idx = Math.floor(Math.random() * filteredMovies.length);
-        if (!pickedIdxs.has(idx)) {
-          pickedIdxs.add(idx);
-          chosen.push(filteredMovies[idx]);
-        }
-      }
-      setMovies(chosen);
+      // Fetch a large enough pool for sampling
+      const moviesArr = await fetchToughTamilMovies({ count: NUM_ROUNDS });
+      // All are already unique and 'tough' from the helper.
+      setMovies(moviesArr);
       // Reset all session states
       setAnswers([]);
       setRound(0); setScore(0); setAttempt(0); setShowResult(null); setUserGuess("");

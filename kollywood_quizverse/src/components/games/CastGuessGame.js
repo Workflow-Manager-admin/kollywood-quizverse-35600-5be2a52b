@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { fetchPopularTamilMovies, getPosterUrl } from "../../tmdbApi";
+import { fetchToughTamilMovies, getPosterUrl } from "../../tmdbApi";
 import { QuizContext } from "../../context/QuizContext";
 import { useNavigate } from "react-router-dom";
 import "./CastGuessGame.css";
@@ -45,16 +45,19 @@ export default function CastGuessGame({ standalone }) {
     async function setupSession() {
       setLoading(true);
       let qArr = [];
-      let movies = await fetchPopularTamilMovies(NUM_ROUNDS * 3);
-      // For each round: pick one movie, make choices including that + others
+      // Get a larger pool for good distractors and sufficient 'toughness'
+      let movies = await fetchToughTamilMovies({ count: NUM_ROUNDS * 4 });
       let usedIds = new Set();
-      for (let i = 0; i < NUM_ROUNDS && movies.length > i + 3; ++i) {
-        // Find first unused as correct; pick 3 distractors
-        let idx = movies.findIndex(m => !usedIds.has(m.id));
-        if (idx === -1) idx = i;
-        const correctMovie = movies[idx];
+      for (let i = 0; i < NUM_ROUNDS && movies.length > (i + 3); ++i) {
+        // Avoid repeats in correct answer
+        let pickIdx = movies.findIndex(m => !usedIds.has(m.id));
+        if (pickIdx === -1) pickIdx = i;
+        const correctMovie = movies[pickIdx];
         usedIds.add(correctMovie.id);
-        let distractors = movies.filter(m => m.id !== correctMovie.id).slice(0, 3);
+        // Select 3 tough distractors not the correct movie
+        let distractors = movies.filter(m => m.id !== correctMovie.id)
+                                .sort(() => Math.random() - 0.5)
+                                .slice(0, 3);
         // randomize option order
         let opts = [correctMovie, ...distractors].sort(() => Math.random() - 0.5);
         // get cast

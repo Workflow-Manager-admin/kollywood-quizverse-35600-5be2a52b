@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { fetchPopularTamilMovies } from "../../tmdbApi";
+import { fetchToughTamilMovies } from "../../tmdbApi";
 import { QuizContext } from "../../context/QuizContext";
 import { useNavigate } from "react-router-dom";
 import "./BuffCertGame.css";
@@ -33,7 +33,7 @@ export default function BuffCertGame({ standalone }) {
   useEffect(() => {
     async function makeQs() {
       setLoading(true);
-      const ms = await fetchPopularTamilMovies(currentLevelObj.qCount + 2);
+      const ms = await fetchToughTamilMovies({ count: currentLevelObj.qCount + 2 });
       setQuestions(ms.map(m => ({
         q: `Release year of "${m.title}"?`,
         answer: String(new Date(m.release_date).getFullYear()),
