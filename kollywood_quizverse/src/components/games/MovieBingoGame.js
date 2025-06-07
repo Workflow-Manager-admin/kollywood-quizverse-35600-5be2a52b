@@ -51,6 +51,15 @@ export default function MovieBingoGame({ standalone }) {
     // eslint-disable-next-line
   }, [standalone]);
 
+  // Add effect for standlone auto home
+  useEffect(() => {
+    if (standalone && done) {
+      const timeout = setTimeout(() => handleCloseOrHome(), 2600);
+      return () => clearTimeout(timeout);
+    }
+    // eslint-disable-next-line
+  }, [standalone, done]);
+
   // "Back" button for page
   function handleGoBack() {
     if (standalone) {
@@ -114,6 +123,8 @@ export default function MovieBingoGame({ standalone }) {
             className="kv-btn kv-btn-accent"
             style={{ minWidth: 58 }}
             onClick={handleGoBack}
+            disabled={standalone && done}
+            title={standalone && done ? "Returning to home..." : ""}
           >
             &larr; Back
           </button>
@@ -172,10 +183,17 @@ export default function MovieBingoGame({ standalone }) {
           <div style={{ fontWeight: 600, fontSize: "1.15rem", color: "#439638" }}>
             Bingo! Final Score: {score} / {BINGO_CATEGORIES.length}
           </div>
+          {standalone ? (
+            <div style={{ color: "#969600", fontSize: 13, marginTop: 7 }}>
+              Returning to home in 2.5 seconds...
+            </div>
+          ) : null}
           <button
             className="kv-btn"
             style={{ marginLeft: 16, marginTop: 5 }}
             onClick={handleCloseOrHome}
+            disabled={standalone}
+            title={standalone ? "Returning to home..." : ""}
           >
             {standalone ? "Go Home" : "Close"}
           </button>

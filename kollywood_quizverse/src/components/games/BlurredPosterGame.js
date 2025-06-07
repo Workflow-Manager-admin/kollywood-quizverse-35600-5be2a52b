@@ -181,6 +181,18 @@ export default function BlurredPosterGame({ standalone }) {
   };
 
   // Last round, just finished
+  // After user sees final result, show score for a few seconds & auto-redirect home
+  React.useEffect(() => {
+    if (standalone && round === NUM_ROUNDS - 1 && showResult !== null) {
+      // After result shown, wait, then navigate home
+      const timeout = setTimeout(() => {
+        handleFinish();
+      }, 2600); // 2.6 seconds for UX
+      return () => clearTimeout(timeout);
+    }
+  // eslint-disable-next-line
+  }, [standalone, round, showResult]);
+
   if (round === NUM_ROUNDS - 1 && showResult !== null) {
     return (
       <div className="kv-game-modal">
@@ -189,6 +201,8 @@ export default function BlurredPosterGame({ standalone }) {
             className="kv-btn kv-btn-accent"
             style={{ minWidth: 58 }}
             onClick={handleGoBack}
+            disabled={standalone}
+            title={standalone ? "Returning to home..." : ""}
           >
             &larr; Back
           </button>
@@ -228,9 +242,15 @@ export default function BlurredPosterGame({ standalone }) {
             </ul>
           </div>
         )}
-        <button className="kv-btn" onClick={handleFinish} style={{ marginTop: 10 }}>
-          See My Score
-        </button>
+        {standalone ? (
+          <div style={{ marginTop: 12, fontSize: 13, color: "#969600" }}>
+            Returning to home in 2.5 seconds...
+          </div>
+        ) : (
+          <button className="kv-btn" onClick={handleFinish} style={{ marginTop: 10 }}>
+            See My Score
+          </button>
+        )}
       </div>
     );
   }

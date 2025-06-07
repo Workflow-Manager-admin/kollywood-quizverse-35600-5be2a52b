@@ -164,6 +164,16 @@ export default function CastGuessGame({ standalone }) {
   };
 
   // Quiz complete summary
+  React.useEffect(() => {
+    if (standalone && state.done) {
+      const timeout = setTimeout(() => {
+        handleCloseOrHome();
+      }, 2600);
+      return () => clearTimeout(timeout);
+    }
+    // eslint-disable-next-line
+  }, [standalone, state.done]);
+
   if (state.done) {
     return (
       <div className="kv-game-modal">
@@ -172,6 +182,8 @@ export default function CastGuessGame({ standalone }) {
             className="kv-btn kv-btn-accent"
             style={{ minWidth: 58 }}
             onClick={handleGoBack}
+            disabled={standalone}
+            title={standalone ? "Returning to home..." : ""}
           >
             &larr; Back
           </button>
@@ -195,9 +207,15 @@ export default function CastGuessGame({ standalone }) {
             </ul>
           </small>
         </div>
-        <button className="kv-btn" onClick={handleCloseOrHome}>
-          {standalone ? "Go Home" : "Close"}
-        </button>
+        {standalone ? (
+          <div style={{ marginTop: 10, color: "#969600", fontSize: 13 }}>
+            Returning to home in 2.5 seconds...
+          </div>
+        ) : (
+          <button className="kv-btn" onClick={handleCloseOrHome}>
+            Close
+          </button>
+        )}
       </div>
     );
   }

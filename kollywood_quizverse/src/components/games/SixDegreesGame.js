@@ -82,6 +82,17 @@ export default function SixDegreesGame({ standalone }) {
     </div>
   );
 
+  // Auto-home redirect after result for standalone
+  React.useEffect(() => {
+    if (standalone && result) {
+      const timeout = setTimeout(() => {
+        handleCloseOrHome();
+      }, 2600);
+      return () => clearTimeout(timeout);
+    }
+    // eslint-disable-next-line
+  }, [standalone, result]);
+
   return (
     <div className="kv-game-modal">
       {headerRow}
@@ -124,10 +135,15 @@ export default function SixDegreesGame({ standalone }) {
           <div style={{ marginTop: 15, color: "#439638", fontWeight: 700 }}>
             Session complete! Score: 5 / 5
           </div>
+          {standalone ? (
+            <div style={{ color: "#969600", fontSize: 13, marginTop: 5 }}>Returning to home in 2.5 seconds...</div>
+          ) : null}
           <button
             className="kv-btn"
             onClick={handleCloseOrHome}
             style={{ marginTop: 18 }}
+            disabled={standalone}
+            title={standalone ? "Returning to home..." : ""}
           >
             {standalone ? "Go Home" : "Close"}
           </button>

@@ -71,6 +71,17 @@ export default function SpeedRoundGame({ standalone }) {
     // eslint-disable-next-line
   }, [started, done]);
 
+  // Results/final summary screen: auto-home on standalone
+  useEffect(() => {
+    if (standalone && done) {
+      const timeout = setTimeout(() => {
+        handleCloseOrHome();
+      }, 2600);
+      return () => clearTimeout(timeout);
+    }
+    // eslint-disable-next-line
+  }, [standalone, done]);
+
   function handleGoBack() {
     if (standalone) {
       navigate(-1); // previous page; root if direct
@@ -154,6 +165,8 @@ export default function SpeedRoundGame({ standalone }) {
             className="kv-btn kv-btn-accent"
             style={{ minWidth: 58 }}
             onClick={handleGoBack}
+            disabled={standalone}
+            title={standalone ? "Returning to home..." : ""}
           >
             &larr; Back
           </button>
@@ -171,13 +184,18 @@ export default function SpeedRoundGame({ standalone }) {
             <ul>
               {answers.map((a, idx) => (
                 <li key={idx} style={{ color: a.correct ? "#439638" : "#d32f2f" }}>
-                  {a.correct ? "✔️" : "❌"} {a.q.replace(/What year was \"(.*?)\" released\?/, (_, t) => t)} — Chose: <b>{a.user}</b>{a.correct ? "" : ` (Ans: ${a.answer})`}
+                  {a.correct ? "✔️" : "❌"} {a.q.replace(/What year was \\"(.*?)\\" released\\?/, (_, t) => t)} — Chose: <b>{a.user}</b>{a.correct ? "" : ` (Ans: ${a.answer})`}
                 </li>
               ))}
             </ul>
           </small>
         </div>
-        <button className="kv-btn" onClick={handleCloseOrHome}>
+        {standalone ? (
+          <div style={{ marginTop: 10, color: "#969600", fontSize: 13 }}>
+            Returning to home in 2.5 seconds...
+          </div>
+        ) : null}
+        <button className="kv-btn" onClick={handleCloseOrHome} disabled={standalone}>
           {standalone ? "Go Home" : "Close"}
         </button>
       </div>

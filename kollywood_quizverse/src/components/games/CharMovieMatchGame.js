@@ -57,6 +57,15 @@ export default function CharMovieMatchGame({ standalone }) {
     // eslint-disable-next-line
   }, [standalone]);
 
+  // Auto redirect for standalone after done
+  useEffect(() => {
+    if (standalone && done) {
+      const timeout = setTimeout(() => handleCloseOrHome(), 2600);
+      return () => clearTimeout(timeout);
+    }
+    // eslint-disable-next-line
+  }, [standalone, done]);
+
   function handleDrop(e, movId) {
     const char = e.dataTransfer.getData("text/plain");
     setDropped(prev => ({ ...prev, [movId]: char }));
@@ -111,6 +120,8 @@ export default function CharMovieMatchGame({ standalone }) {
         className="kv-btn kv-btn-accent"
         style={{ minWidth: 58 }}
         onClick={handleGoBack}
+        disabled={standalone && done}
+        title={standalone && done ? "Returning to home..." : ""}
       >
         &larr; Back
       </button>
@@ -174,7 +185,18 @@ export default function CharMovieMatchGame({ standalone }) {
       ) : (
         <div style={{ marginTop: 14 }}>
           <b>Final Score: {score} / {sample.length}</b>
-          <button className="kv-btn" onClick={handleCloseOrHome} style={{ marginLeft: 18 }}>
+          {standalone ? (
+            <div style={{ color: "#969600", fontSize: 13, marginTop: 7 }}>
+              Returning to home in 2.5 seconds...
+            </div>
+          ) : null}
+          <button
+            className="kv-btn"
+            onClick={handleCloseOrHome}
+            style={{ marginLeft: 18 }}
+            disabled={standalone}
+            title={standalone ? "Returning to home..." : ""}
+          >
             {standalone ? "Go Home" : "Close"}
           </button>
         </div>
