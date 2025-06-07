@@ -363,18 +363,30 @@ export default function BlurredPosterGame({ standalone }) {
             <button className="kv-btn">Guess</button>
           </form>
           <div className="kv-hint-row">{MAX_ATTEMPTS - attempt} tries left.</div>
+          <button
+            className="kv-btn kv-btn-accent"
+            style={{ marginTop: 13, marginLeft: 6, background: "#FFD600", color: "#2d2d2d" }}
+            onClick={() => {
+              // Mark this round as "lose" and auto-advance after short delay, or show answer if last
+              setShowResult("reveal");
+              setAnswers(a => [...a, { correct: false, title: movie.title }]);
+              setTimeout(() => {
+                if (round + 1 < NUM_ROUNDS) handleNext();
+                else setRound(NUM_ROUNDS); // move to results
+              }, 1500); // Show for 1.5s before moving forward
+            }}
+          >
+            Reveal Answer
+          </button>
         </>
       ) : (
         <>
-          {showResult === "win" ? (
-            <div className="kv-result-win">
-              🎉 Correct! It was <b>{movie.title}</b>.
-            </div>
-          ) : (
-            <div className="kv-result-lose">
-              ❌ Sorry, the answer was <b>{movie.title}</b>.
-            </div>
-          )}
+          <div className={showResult === "win" ? "kv-result-win" : "kv-result-lose"}>
+            {showResult === "win"
+              ? <>🎉 Correct! It was <b>{movie.title}</b>.</>
+              : <>❌ The answer was <b>{movie.title}</b>.</>
+            }
+          </div>
           {clueCount > 0 && (
             <div className="kv-hint-row">
               <b>Clues used ({clueCount}/2):</b>
@@ -385,17 +397,22 @@ export default function BlurredPosterGame({ standalone }) {
               </ul>
             </div>
           )}
-          <button
-            className="kv-btn"
-            onClick={() => {
-              if (round + 1 < NUM_ROUNDS) handleNext();
-              else setRound(NUM_ROUNDS); // go to final view
-            }}
-            style={{ marginTop: 11 }}
-          >
-            {round + 1 < NUM_ROUNDS ? "Next Poster" : "See My Score"}
-          </button>
-          <div className="kv-hint-row">{NUM_ROUNDS - (round + 1)} more quiz{NUM_ROUNDS - (round + 1) === 1 ? "" : "zes"} left</div>
+          {/* If this was a manual 'Reveal Answer', skip showing button & auto-advance */}
+          {showResult !== "reveal" && (
+            <>
+              <button
+                className="kv-btn"
+                onClick={() => {
+                  if (round + 1 < NUM_ROUNDS) handleNext();
+                  else setRound(NUM_ROUNDS); // go to final view
+                }}
+                style={{ marginTop: 11 }}
+              >
+                {round + 1 < NUM_ROUNDS ? "Next Poster" : "See My Score"}
+              </button>
+              <div className="kv-hint-row">{NUM_ROUNDS - (round + 1)} more quiz{NUM_ROUNDS - (round + 1) === 1 ? "" : "zes"} left</div>
+            </>
+          )}
         </>
       )}
     </div>
