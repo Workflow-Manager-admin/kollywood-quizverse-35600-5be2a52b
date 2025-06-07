@@ -62,6 +62,8 @@ export default function HomeDashboard() {
       navigate("/char-movie-match-game");
     } else if (gameKey === "movieBingo") {
       navigate("/movie-bingo-game");
+    } else if (gameKey === "sixDegrees") {
+      navigate("/six-degrees-game");
     } else {
       dispatch({ type: "OPEN_MODAL", payload: { name: gameKey } });
     }
