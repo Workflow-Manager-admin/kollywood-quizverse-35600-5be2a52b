@@ -14,6 +14,7 @@ import CharMovieMatchGame from "./components/games/CharMovieMatchGame";
 import MovieBingoGame from "./components/games/MovieBingoGame";
 import SixDegreesGame from "./components/games/SixDegreesGame";
 import SpeedRoundGame from "./components/games/SpeedRoundGame";
+import BuffCertGame from "./components/games/BuffCertGame";
 // React Router imports
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
@@ -44,12 +45,13 @@ function KollywoodQuizVerseAppWithRouter() {
           <Route path="/movie-bingo-game" element={<MovieBingoGame standalone={true} />} />
           <Route path="/six-degrees-game" element={<SixDegreesGame standalone={true} />} />
           <Route path="/speed-round-game" element={<SpeedRoundGame standalone={true} />} />
+          <Route path="/buff-cert-game" element={<BuffCertGame standalone={true} />} />
           <Route path="/profile" element={<ProfileScreen />} />
           <Route path="/leaderboard" element={<LeaderboardScreen />} />
           <Route path="/score-history" element={<ScoreHistoryScreen />} />
           <Route path="*" element={<HomeDashboard />} />
         </Routes>
-        {/* Only show GameModalManager if NOT on game routes */}
+        {/* Only show GameModalManager if NOT on full-page game routes */}
         {
           location.pathname !== "/blurred-poster-game" &&
           location.pathname !== "/cast-guess-game" &&
@@ -57,6 +59,7 @@ function KollywoodQuizVerseAppWithRouter() {
           location.pathname !== "/movie-bingo-game" &&
           location.pathname !== "/six-degrees-game" &&
           location.pathname !== "/speed-round-game" &&
+          location.pathname !== "/buff-cert-game" &&
           <GameModalManager />
         }
       </main>

@@ -66,6 +66,8 @@ export default function HomeDashboard() {
       navigate("/six-degrees-game");
     } else if (gameKey === "speedRound") {
       navigate("/speed-round-game");
+    } else if (gameKey === "buffCert") {
+      navigate("/buff-cert-game");
     } else {
       dispatch({ type: "OPEN_MODAL", payload: { name: gameKey } });
     }
