@@ -74,6 +74,8 @@ export default function BuffCertGame({ standalone }) {
       if (standalone) {
         setSessionScores(arr => [...arr, { level, score: levelScore, max: questions.length, cleared: levelScore === questions.length }]);
       }
+      // Removed any auto-navigation or redirect after completion
+      // User will see static results + "Back" button below.
     } else setIdx(idx + 1);
   }
 
@@ -147,12 +149,15 @@ export default function BuffCertGame({ standalone }) {
           </table>
         </div>
         <div style={{marginTop:10}}>
-          <button className="kv-btn" onClick={handleCloseOrHome}>
-            Go Home
+          <button className="kv-btn" onClick={handleGoBack}>
+            &larr; Back
           </button>
         </div>
         <div style={{marginTop:13}}>
           <button className="kv-btn kv-cert-share">Share my Certification</button>
+        </div>
+        <div style={{marginTop:15, color:"#439638", fontWeight:500}}>
+          Certification complete. Use 'Back' to return or refresh for a new game!
         </div>
       </div>
     );
@@ -195,14 +200,14 @@ export default function BuffCertGame({ standalone }) {
               Next Level
             </button>
           ) : (
-            <button className="kv-btn" onClick={standalone ? handleCloseOrHome : handleGoBack} style={{marginLeft:18}}>
-              {standalone ? "Go Home" : "Close"}
+            <button className="kv-btn" onClick={handleGoBack} style={{marginLeft:18}}>
+              &larr; Back
             </button>
           )}
           <div style={{marginTop:12,fontSize:14,color:"var(--kv-accent)"}}>
             {correct === questions.length
               ? "Buff Level Cleared! 🚀"
-              : "Try level again or close."}
+              : "Try level again or go back."}
           </div>
           <div style={{marginTop:12}}>
             <button className="kv-btn kv-cert-share">Share my Certification</button>
