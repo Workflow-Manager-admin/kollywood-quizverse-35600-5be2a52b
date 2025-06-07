@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { fetchPopularTamilMovies, getPosterUrl } from "../../tmdbApi";
 import { QuizContext } from "../../context/QuizContext";
+import { useNavigate } from "react-router-dom";
 import "./CharMovieMatchGame.css";
 
 async function fetchCharacterSample(movies) {
@@ -25,25 +26,39 @@ async function fetchCharacterSample(movies) {
   return list;
 }
 
-// PUBLIC_INTERFACE
-export default function CharMovieMatchGame() {
+/**
+ * CharMovieMatchGame can be rendered in a modal or as a standalone game.
+ * In standalone mode, auto-start a session on mount,
+ * show in-session score at the top, and show a Back button.
+ * Score is recorded and displayed at the end of play.
+ */
+ // PUBLIC_INTERFACE
+
+export default function CharMovieMatchGame({ standalone }) {
   const [sample, setSample] = useState([]);
   const [dropped, setDropped] = useState({});
   const [done, setDone] = useState(false);
+  const [score, setScore] = useState(0);
   const { dispatch } = useContext(QuizContext);
+  const navigate = useNavigate();
 
+  // On mount, or when standalone, always start a new game session
   useEffect(() => {
     async function load() {
       const movies = await fetchPopularTamilMovies(4);
       const pairs = await fetchCharacterSample(movies);
-      setSample(pairs.sort(() => Math.random()-0.5));
+      setSample(pairs.sort(() => Math.random() - 0.5));
+      setDropped({});
+      setDone(false);
+      setScore(0);
     }
     load();
-  }, []);
+    // eslint-disable-next-line
+  }, [standalone]);
 
   function handleDrop(e, movId) {
     const char = e.dataTransfer.getData("text/plain");
-    setDropped({ ...dropped, [movId]: char });
+    setDropped(prev => ({ ...prev, [movId]: char }));
   }
   function handleDragStart(e, char) {
     e.dataTransfer.setData("text/plain", char);
@@ -54,27 +69,63 @@ export default function CharMovieMatchGame() {
   }
 
   function checkAndSave() {
-    let score = 0;
+    let calcScore = 0;
     for (const sp of sample) {
-      if (dropped[sp.movie.id] === sp.character) score++;
+      if (dropped[sp.movie.id] === sp.character) calcScore++;
     }
+    setScore(calcScore);
     setDone(true);
     dispatch({
       type: "ADD_SCORE_HISTORY",
       payload: {
         game: "Character Match",
-        score: score,
+        score: calcScore,
         time: new Date().toLocaleString()
       }
     });
   }
 
-  function close() {
-    dispatch({ type: "CLOSE_MODAL" });
+  function handleGoBack() {
+    if (standalone) {
+      navigate(-1);
+    } else {
+      dispatch({ type: "CLOSE_MODAL" });
+    }
   }
+
+  function handleCloseOrHome() {
+    if (standalone) {
+      navigate("/");
+    } else {
+      dispatch({ type: "CLOSE_MODAL" });
+    }
+  }
+
+  // Header row for Back and Score (standalone)
+  const headerRow = standalone ? (
+    <div style={{
+      display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8
+    }}>
+      <button
+        className="kv-btn kv-btn-accent"
+        style={{ minWidth: 58 }}
+        onClick={handleGoBack}
+      >
+        &larr; Back
+      </button>
+      <div style={{
+        background: "#ffd600", color: "#d32f2f", fontWeight: 700,
+        fontSize: "1.08rem", borderRadius: 7, padding: "4px 17px", minWidth: 60, textAlign: "center",
+        boxShadow: "0 1px 8px #efb01d21", display: "inline-block"
+      }}>
+        Score: {score} / {sample.length || 4}
+      </div>
+    </div>
+  ) : null;
 
   return (
     <div className="kv-game-modal">
+      {headerRow}
       <h2>Character-Movie Match</h2>
       <div className="kv-char-match-info">
         Drag the character name onto the correct movie poster.
@@ -85,8 +136,9 @@ export default function CharMovieMatchGame() {
             <div
               className="kv-char-draggable"
               key={sp.character + i}
-              draggable
+              draggable={!done}
               onDragStart={e => handleDragStart(e, sp.character)}
+              style={done ? { opacity: 0.6, cursor: "not-allowed" } : {}}
             >
               {sp.character}
             </div>
@@ -97,8 +149,9 @@ export default function CharMovieMatchGame() {
             <div
               key={sp.movie.id}
               className="kv-char-dropzone"
-              onDrop={e => handleDrop(e, sp.movie.id)}
+              onDrop={e => !done && handleDrop(e, sp.movie.id)}
               onDragOver={e => e.preventDefault()}
+              style={done ? { opacity: 0.7 } : {}}
             >
               <img src={getPosterUrl(sp.movie.poster_path)} style={{ width: 100, borderRadius: 10 }} alt="" />
               <div className="kv-drop-label">
@@ -108,19 +161,20 @@ export default function CharMovieMatchGame() {
           ))}
         </div>
       </div>
-      <button
-        className="kv-btn"
-        onClick={checkAndSave}
-        disabled={!allMatched() || done}
-        style={{ marginTop: 12 }}
-      >
-        Submit
-      </button>
-      {done && (
+      {!done ? (
+        <button
+          className="kv-btn"
+          onClick={checkAndSave}
+          disabled={!allMatched() || done}
+          style={{ marginTop: 12 }}
+        >
+          Submit
+        </button>
+      ) : (
         <div style={{ marginTop: 14 }}>
-          <b>Score: {Object.keys(dropped).filter((k, i) => dropped[k] === sample[i]?.character).length}</b>
-          <button className="kv-btn" onClick={close} style={{ marginLeft: 18 }}>
-            Close
+          <b>Final Score: {score} / {sample.length}</b>
+          <button className="kv-btn" onClick={handleCloseOrHome} style={{ marginLeft: 18 }}>
+            {standalone ? "Go Home" : "Close"}
           </button>
         </div>
       )}

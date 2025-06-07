@@ -58,6 +58,8 @@ export default function HomeDashboard() {
       navigate("/blurred-poster-game");
     } else if (gameKey === "castGuess") {
       navigate("/cast-guess-game");
+    } else if (gameKey === "charMovieMatch") {
+      navigate("/char-movie-match-game");
     } else {
       dispatch({ type: "OPEN_MODAL", payload: { name: gameKey } });
     }
