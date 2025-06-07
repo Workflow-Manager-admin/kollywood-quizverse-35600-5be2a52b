@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { fetchPopularTamilMovies, getPosterUrl } from "../../tmdbApi";
 import { QuizContext } from "../../context/QuizContext";
+import { useNavigate } from "react-router-dom";
 import "./MovieBingoGame.css";
 
 const BINGO_CATEGORIES = [
@@ -23,80 +24,160 @@ function getCategoryForMovie(movie) {
   return -1;
 }
 
-export default function MovieBingoGame() {
+// PUBLIC_INTERFACE
+/**
+ * MovieBingoGame can be used in a modal or as a standalone page.
+ * If 'standalone' prop is true, launch as a full-page, track session and show Back button.
+ * Score is calculated by categories completed and shown after submit.
+ */
+export default function MovieBingoGame({ standalone }) {
   const [movies, setMovies] = useState([]);
   const [clicked, setClicked] = useState({});
   const [done, setDone] = useState(false);
+  const [score, setScore] = useState(0); // score == completed cells
   const { dispatch } = useContext(QuizContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function load() {
-      const data = await fetchPopularTamilMovies(16);
+      // Fetch enough movies for all categories
+      const data = await fetchPopularTamilMovies(30);
       setMovies(data.map(m => ({ ...m })));
+      setClicked({});
+      setDone(false);
+      setScore(0);
     }
     load();
-  }, []);
+    // eslint-disable-next-line
+  }, [standalone]);
 
-  function handleClick(idx) {
-    setClicked({ ...clicked, [idx]: true });
+  // "Back" button for page
+  function handleGoBack() {
+    if (standalone) {
+      navigate(-1);
+    } else {
+      dispatch({ type: "CLOSE_MODAL" });
+    }
   }
 
-  function checkWin() {
-    let matches = 0;
-    for (let i = 0; i < movies.length; ++i) {
-      if (clicked[i]) matches++;
-    }
+  function handleClick(catIdx, movieId) {
+    setClicked(prev => ({ ...prev, [`${catIdx}_${movieId}`]: true }));
+  }
+
+  // For scoring: count # of distinct categories with at least 1 selected
+  function calcBingoScore() {
+    let categoriesWithSelection = new Set();
+    Object.keys(clicked).forEach(key => {
+      const [catIdx] = key.split("_");
+      categoriesWithSelection.add(Number(catIdx));
+    });
+    return categoriesWithSelection.size;
+  }
+
+  function handleSubmit() {
+    const sessionScore = calcBingoScore();
+    setScore(sessionScore);
     setDone(true);
     dispatch({
       type: "ADD_SCORE_HISTORY",
       payload: {
         game: "Movie Bingo",
-        score: matches,
+        score: sessionScore,
         time: new Date().toLocaleString()
       }
     });
   }
 
-  function close() {
-    dispatch({ type: "CLOSE_MODAL" });
+  function handleCloseOrHome() {
+    if (standalone) {
+      navigate("/");
+    } else {
+      dispatch({ type: "CLOSE_MODAL" });
+    }
   }
+
+  // Show session UI with Back, Score, Board, and submit/final pane
+  const headerRowStyle = {
+    display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10
+  };
+  const scoreBoxStyle = {
+    background: "#ffd600", color: "#d32f2f", fontWeight: 700,
+    fontSize: "1.08rem", borderRadius: 7, padding: "4px 17px", minWidth: 65, textAlign: "center",
+    boxShadow: "0 1px 8px #efb01d21", display: "inline-block"
+  };
 
   return (
     <div className="kv-game-modal">
+      {(standalone || true) && (
+        <div style={headerRowStyle}>
+          <button
+            className="kv-btn kv-btn-accent"
+            style={{ minWidth: 58 }}
+            onClick={handleGoBack}
+          >
+            &larr; Back
+          </button>
+          <div style={scoreBoxStyle}>
+            Score: {done ? score : calcBingoScore()} / {BINGO_CATEGORIES.length}
+          </div>
+        </div>
+      )}
       <h2>Kollywood Movie Bingo</h2>
       <div className="kv-bingo-board">
-        {BINGO_CATEGORIES.map((cat, i) => (
+        {BINGO_CATEGORIES.map((cat, catIdx) => (
           <div key={cat} className="kv-bingo-cell">
             {cat}
             <div className="kv-bingo-movies">
               {movies
-                .filter(m => getCategoryForMovie(m) === i)
-                .map((m, idx) => (
-                  <div 
-                    key={m.id}
-                    className={
-                      clicked[idx] ? "kv-bingo-movie-selected" : "kv-bingo-movie"
-                    }
-                    onClick={() => handleClick(idx)}
-                  >
-                    <img 
-                      src={getPosterUrl(m.poster_path, "w154")} 
-                      alt={m.title} 
-                      style={{ width: 46, borderRadius: "7px" }} 
-                    />
-                    <div style={{ fontSize: 10 }}>{m.title}</div>
-                  </div>
-                ))}
+                .filter(m => getCategoryForMovie(m) === catIdx)
+                .map((m) => {
+                  const clickKey = `${catIdx}_${m.id}`;
+                  return (
+                    <div
+                      key={m.id}
+                      className={
+                        clicked[clickKey]
+                          ? "kv-bingo-movie-selected"
+                          : "kv-bingo-movie"
+                      }
+                      style={done ? { opacity: 0.65, cursor: "not-allowed" } : {}}
+                      onClick={() => {
+                        if (!done) handleClick(catIdx, m.id);
+                      }}
+                    >
+                      <img
+                        src={getPosterUrl(m.poster_path, "w154")}
+                        alt={m.title}
+                        style={{ width: 46, borderRadius: "7px" }}
+                      />
+                      <div style={{ fontSize: 10 }}>{m.title}</div>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         ))}
       </div>
-      <button className="kv-btn" style={{ marginTop: 12 }} onClick={checkWin} disabled={done}>Submit</button>
-      {done && (
-        <div style={{ marginTop: 14 }}>
-          <b>Bingo! Score: {Object.keys(clicked).length}</b>
-          <button className="kv-btn" onClick={close} style={{ marginLeft: 16 }}>
-            Close
+      {!done ? (
+        <button
+          className="kv-btn"
+          style={{ marginTop: 12 }}
+          onClick={handleSubmit}
+          disabled={done}
+        >
+          Submit
+        </button>
+      ) : (
+        <div style={{ marginTop: 18 }}>
+          <div style={{ fontWeight: 600, fontSize: "1.15rem", color: "#439638" }}>
+            Bingo! Final Score: {score} / {BINGO_CATEGORIES.length}
+          </div>
+          <button
+            className="kv-btn"
+            style={{ marginLeft: 16, marginTop: 5 }}
+            onClick={handleCloseOrHome}
+          >
+            {standalone ? "Go Home" : "Close"}
           </button>
         </div>
       )}
